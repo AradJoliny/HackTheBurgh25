@@ -1,29 +1,26 @@
-import { useState } from 'react';
+type SliderProps = {
+  radius: number;
+  setRadius: (r: number) => void;
+};
 
-export default function Slider() {
-  const [value, setValue] = useState(50); // initial value
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(Number(e.target.value));
-  };
+export default function Slider({ radius, setRadius }: SliderProps) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => setRadius(Number(e.target.value));
 
   return (
     <div className="mb-3">
-      <label htmlFor="range4" className="form-label">
-        Radius
+      <label htmlFor="radiusSlider" className="form-label">
+        Circle Radius: {radius} meters
       </label>
       <input
         type="range"
         className="form-range"
-        min="0"
-        max="100"
-        id="range4"
-        value={value}
+        min={500}
+        max={5000}
+        step={5}
+        value={radius}
+        id="radiusSlider"
         onChange={handleChange}
       />
-      <output htmlFor="range4" id="rangeValue" aria-hidden="true">
-        {value}
-      </output>
     </div>
   );
 }

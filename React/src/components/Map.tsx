@@ -3,42 +3,16 @@ import {MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap, Circle} fr
 import L, {LatLngExpression} from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './Map.css';
+import Slider from './Slider';
+import ClickableMap from './ClickableMap';
 
-
-function ClickableMap({
-  setCoordsJSON,
-}: {
-  setCoordsJSON: (c: { coords: [number, number] }[]) => void;
-}) {
-  const [clickedPoints, setClickedPoints] = useState<LatLngExpression[]>([]);
-  // Hook to listen for clicks on the map
-
-  useMapEvents({
-    click(e) {
-      const newPoint: LatLngExpression = [e.latlng.lat, e.latlng.lng];
-      setClickedPoints([newPoint]);
-
-      const newCoords = { coords: [e.latlng.lng, e.latlng.lat] as [number,number] };
-      setCoordsJSON([newCoords]);
-    },
-  });
-
-  return (
-    <>
-      {clickedPoints.map((point, idx) => (
-        <>
-          <Marker key={idx} position={point}>
-            <Popup>Selected Location</Popup>
-          </Marker>
-          <Circle key={`circle-${idx}`} center={point} radius={1000} pathOptions={{ color: 'red' }} />
-        </>
-      ))}
-    </>
-  );
+type MapComponentProps = {
+  radius: number;
 }
 
-export default function MapComponent() {
+export default function MapComponent({ radius }: MapComponentProps) {
   const [coordsJSON, setCoordsJSON] = useState<{ coords: [number, number] }[]>([]);
+
 
   return (
       <div>
@@ -47,13 +21,10 @@ export default function MapComponent() {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="&copy; <a href='https://www.openstreetmap.org/'>OpenStreetMap</a> contributors"
         />
-        <ClickableMap setCoordsJSON={setCoordsJSON} />
-        {coordsJSON.map((c, idx) => (
-          <Marker key={idx} position={[c.coords[1],c.coords[0]]}>
-            <Popup>Selected location</Popup>
-          </Marker>
-        ))}
+        <ClickableMap setCoordsJSON={setCoordsJSON} radius={radius}/>
       </MapContainer>
+
+
 
       <div style={{ marginTop: '10px' }}>
         <h3>Selected Coordinates (JSON format):</h3>
