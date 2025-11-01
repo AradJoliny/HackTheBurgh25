@@ -2,6 +2,7 @@ from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
 
 from Python.flask_app.services.CoordsService import parse_coords
+from Python.flask_app.services.TimeService import parse_time
 
 app = Flask(__name__)
 CORS(app)
@@ -27,6 +28,20 @@ def start_coordinates():
         if not coordinates:
             return jsonify({'error': 'invalid or missing coordinates'}), 400
         return jsonify(coordinates), 200
+
+    return jsonify({'error': 'GET method not supported'}), 405
+
+@app.route('/getStartTime', methods=['GET','POST'])
+def start_time():
+    # POST JSON body
+    if request.method == 'POST':
+        if not request.is_json:
+            return jsonify({'error': 'expected JSON body'}), 400
+        data = request.get_json()
+        time = parse_time(data)
+        if not time:
+            return jsonify({'error': 'missing start_time'}), 400
+        return jsonify({'start_time': start_time}), 200
 
     return jsonify({'error': 'GET method not supported'}), 405
 
