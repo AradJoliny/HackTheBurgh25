@@ -103,14 +103,35 @@ def calculate_date_duration(duration):
     return duration_mapping.get(duration, 180)
 
 # choose the first activity in the list that meets the constraints
-def select_next_activity(results, current_location, distances, used_types, remaining_time, current_time):
+def select_next_activity(results, current_location, used_types, remaining_time, current_time,travel_mode):
     for activity in results:
         # skip if activity type has already been done
         activity_types = set(activity.get('types', []))
         if activity_types & used_types:
             continue
 
-        travel_time = get_travel_time(activity, current_location, distances)
+        # calculate route to get travel time
+        try:
+            # Handle both formats: direct {lat, lng} and nested {location: {lat, lng}}
+            if 'location' in current_location:
+                origin = {'lat': current_location['location']['lat'], 'lng': current_location['location']['lng']}
+            else:
+                origin = {'lat': current_location['lat'], 'lng': current_location['lng']}
+
+            response = calculate_route(
+                origin=origin,
+                destination={'lat': activity['location']['lat'], 'lng': activity['location']['lng']},
+                travel_mode=travel_mode
+            )
+
+            if response.routes:
+                travel_time = int(response.routes[0].duration.seconds/60)
+            else:
+                continue
+
+        except Exception as e:
+            print(f"Error calculating route: {e}")
+            continue
 
         # just use the first type to determine duration, or default to 60
         primary_type = activity['types'][0] if activity.get('types') else None
@@ -124,15 +145,9 @@ def select_next_activity(results, current_location, distances, used_types, remai
     # no suitable venue found
     return None
 
-
-# finds travel time between two venues using precomputed distances
-def get_travel_time(activity, current_location, distances):
-    # to-do: implement based on the structure of the distance matrix
-    return travel_time
-
 # template for creating full schedule of activities
 # will be called on all four durations to return separate schedules
-def create_schedule(duration, results, distances, start_time, user_location):
+def create_schedule(duration, results, start_time, user_location,travel_mode):
     total_minutes = calculate_date_duration(duration)
     schedule = []
     current_time = start_time
@@ -143,12 +158,27 @@ def create_schedule(duration, results, distances, start_time, user_location):
     # shortest activity time is 60 minutes
     while remaining_time >= 60:
         best_activity = select_next_activity(
-            results,current_location,distances,used_types,remaining_time,current_time)
+            results,current_location,used_types,remaining_time,current_time,travel_mode)
         if not best_activity:
             break
 
-        # add travel time
-        travel_time = get_travel_time(best_activity,current_location,distances)
+        # calculate travel time using calculate route
+        try:
+            # Handle both formats for current_location
+            if 'location' in current_location:
+                origin = {'lat': current_location['location']['lat'], 'lng': current_location['location']['lng']}
+            else:
+                origin = {'lat': current_location['lat'], 'lng': current_location['lng']}
+
+            response = calculate_route(
+                origin=origin,
+                destination={'lat': best_activity['location']['lat'], 'lng': best_activity['location']['lng']},
+                travel_mode=travel_mode
+            )
+            travel_time = int(response.routes[0].duration.seconds / 60) if response.routes else 0
+        except Exception:
+            travel_time = 0
+
         current_time += travel_time
         remaining_time -= travel_time
 
@@ -165,7 +195,7 @@ def create_schedule(duration, results, distances, start_time, user_location):
         current_time += activity_duration
         remaining_time -= activity_duration
         current_location = best_activity
-        # adding all types from this activity to used_types
+         #adding all types from this activity to used_types
         if best_activity.get('types'):
-            used_types.add(best_activity['types'])
+            used_types.update(best_activity['types'])
     return schedule
