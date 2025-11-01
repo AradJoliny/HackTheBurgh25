@@ -47,8 +47,12 @@ def get_choices():
     except (ValueError, TypeError):
         return jsonify({'error': 'invalid radius value'}), 400
 
+    travel_mode = data['travel_mode']
+    if travel_mode not in ['DRIVE', 'WALK', 'TRANSIT']:
+        return jsonify({'error': 'invalid travel_mode'}), 400
+
     # Save to file
-    saved_data = save_choices(coordinates, time, categories, radius)
+    saved_data = save_choices(coordinates, time, categories, radius, travel_mode)
 
     return jsonify({'status': 'ok', 'saved': saved_data}), 200
 

@@ -5,13 +5,14 @@ from pathlib import Path
 DATA_FILE = Path(__file__).parent / "user_choices.json"
 
 
-def save_choices(coordinates, time, categories, radius):
+def save_choices(coordinates, time, categories, radius, travel_mode):
     """Save all user choices to a JSON file."""
     data = {
         "coordinates": coordinates,
         "start_time": time,
         "categories": categories,
-        "radius": radius
+        "radius": radius,
+        "travel_mode": travel_mode
     }
 
     os.makedirs(DATA_FILE.parent, exist_ok=True)

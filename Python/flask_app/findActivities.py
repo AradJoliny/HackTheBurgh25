@@ -1,6 +1,7 @@
 import os
 
 from dotenv import load_dotenv
+from google.type import latlng_pb2
 
 from Python.flask_app.storage.store_data import load_choices
 from google.maps import places_v1
@@ -23,8 +24,10 @@ def find_activities():
 
     tags = translate_tags(categories)
 
+    print("Translated tags for search:", tags)
+
     # find places
-    results = search_nearby_places(coords, radius, tags)
+    results = search_nearby_places(coords, tags, radius)
 
     return {
         "status": "ok",
@@ -38,30 +41,41 @@ def search_nearby_places(coords, included_types, radius_meters):
     if not api_key:
         raise ValueError("GOOGLE_PLACES_API_KEY not found in environment")
 
-    # call Google places api nearby search (new version)
-    client = places_v1.PlacesClient()
+    # Create client options with API key
+    from google.api_core.client_options import ClientOptions
+    client_options = ClientOptions(api_key=api_key)
 
-    # create the location restriction (circle with given user radius)
-    location_restriction = places_v1.SearchLocationRestriction(
-        circle = places_v1.Circle(
-            center = places_v1.LatLng(
-                latitude = coords['lat'],
-                longitude = coords['lng']
-            ),
-            radius = radius_meters
+    client = places_v1.PlacesClient(client_options=client_options)
+
+    # Create center using google.type.latlng_pb2.LatLng
+    center = latlng_pb2.LatLng(
+        latitude=coords['lat'],
+        longitude=coords['lng']
+    )
+
+    # Create location restriction
+    location_restriction = places_v1.SearchNearbyRequest.LocationRestriction(
+        circle=places_v1.Circle(
+            center=center,
+            radius=radius_meters
         )
     )
 
     # build request
-    request = places_v1.SearchPlaceRequest(
-        location_restriction = location_restriction,
-        included_types = included_types,
-        maxResultCount = 10,
-        rank_preference = places_v1.SearchPlaceRequest.RankPreference.POPULARITY
+    request = places_v1.SearchNearbyRequest(
+        location_restriction=location_restriction,
+        included_types=included_types,
+        max_result_count=10,
+        rank_preference=places_v1.SearchNearbyRequest.RankPreference.POPULARITY
     )
 
+
     try:
-        response = client.search_nearby_places(request=request)
+        metadata = [("x-goog-fieldmask",
+                     "places.displayName,places.formattedAddress,places.types,places.rating,places.location")]
+        response = client.search_nearby(request=request, metadata=metadata)
+
+
 
         activities = []
         for place in response.places:
