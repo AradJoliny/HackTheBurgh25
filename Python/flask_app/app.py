@@ -2,9 +2,7 @@ from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
 
 from Python.flask_app.findActivities import find_activities
-from Python.flask_app.services.CoordsService import parse_coords
-from Python.flask_app.services.TimeService import parse_time
-from Python.flask_app.services.ActivityService import parse_categories
+from Python.flask_app.services.Validation import *
 from Python.flask_app.storage.store_data import save_choices
 
 app = Flask(__name__)
