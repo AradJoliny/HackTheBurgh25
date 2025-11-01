@@ -1,5 +1,13 @@
+import os
+
+from dotenv import load_dotenv
+
 from Python.flask_app.storage.store_data import load_choices
 from google.maps import places_v1
+
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 def find_activities():
@@ -26,8 +34,11 @@ def find_activities():
 
 
 def search_nearby_places(coords, included_types, radius_meters):
-    # call google places api nearby search (new version)
+    api_key = os.getenv('GOOGLE_PLACES_API_KEY')
+    if not api_key:
+        raise ValueError("GOOGLE_PLACES_API_KEY not found in environment")
 
+    # call Google places api nearby search (new version)
     client = places_v1.PlacesClient()
 
     # create the location restriction (circle with given user radius)
@@ -91,4 +102,5 @@ def translate_tags(categories):
     for category in categories:
         if category in category_mapping:
             translated_types.extend(category_mapping[category])
-        return translated_types
+
+    return list(set(translated_types))
