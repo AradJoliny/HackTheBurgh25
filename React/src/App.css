@@ -11,7 +11,33 @@
     padding: 0;
 }
 
+.intermediate-app {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    background-color: #ffb7ce;
+    min-height: 100%;
+    margin: 0;
+    padding: 40px 0;
+    overflow-y: auto;
+}
+
 .content {
+
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    display: flex;
+    gap: 20%;
+    align-items: center;
+    width: 80%;
+    margin-bottom: 30px;
+}
+
+.intermediate-content {
     #border: 2px solid red;
     padding: 20px;
     background-color: white;
@@ -19,4 +45,32 @@
     display: flex;
     gap: 20%;
     align-items: center;
+    width: 80%;
+    margin-bottom: 30px;
+}
+
+.activity-button {
+
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    display: flex;
+    gap: 20%;
+    align-items: center;
+    width: 80%;
+    margin-bottom: 30px;
+}
+
+.page-button {
+  padding: 10px 20px;
+  margin: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #ffb7ce;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.page-button:hover {
+  background-color: #ff9bb0;
 }

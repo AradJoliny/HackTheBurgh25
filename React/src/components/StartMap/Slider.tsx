@@ -4,7 +4,8 @@ type SliderProps = {
 };
 
 export default function Slider({ radius, setRadius }: SliderProps) {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => setRadius(Number(e.target.value));
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setRadius(Number(e.target.value));
 
   return (
     <div className="mb-3">
