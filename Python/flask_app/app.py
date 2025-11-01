@@ -3,6 +3,7 @@ from flask_cors import CORS
 
 from Python.flask_app.services.CoordsService import parse_coords
 from Python.flask_app.services.TimeService import parse_time
+from Python.flask_app.services.ActivityService import parse_categories
 
 app = Flask(__name__)
 CORS(app)
@@ -63,6 +64,18 @@ def get_radius():
             return jsonify({'error': 'invalid radius value'}), 400
 
     return jsonify({'error': 'GET method not supported'}), 405
+
+@app.route('/getCategories', methods=['GET', 'POST'])
+def get_categories():
+    #POST JSON body
+    if request.method == 'POST':
+        if not request.is_json:
+            return jsonify({'error': 'expected JSON body'}), 400
+        data = request.get_json()
+        categories = parse_categories(data)
+        if not categories:
+            return jsonify({'error': 'missing categories'}), 400
+        return jsonify({'categories': categories}), 200
 
 
 if __name__ == '__main__':
