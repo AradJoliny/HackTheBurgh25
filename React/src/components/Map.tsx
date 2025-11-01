@@ -1,19 +1,40 @@
 import { useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
-import L, { LatLngExpression } from 'leaflet';
+import {MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap, Circle} from 'react-leaflet';
+import L, {LatLngExpression} from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './Map.css';
 
 
-function ClickableMap({ setCoordsJSON,}: { setCoordsJSON: (c: {coords: [number,number] }[]) => void }) {
+function ClickableMap({
+  setCoordsJSON,
+}: {
+  setCoordsJSON: (c: { coords: [number, number] }[]) => void;
+}) {
+  const [clickedPoints, setClickedPoints] = useState<LatLngExpression[]>([]);
   // Hook to listen for clicks on the map
+
   useMapEvents({
     click(e) {
+      const newPoint: LatLngExpression = [e.latlng.lat, e.latlng.lng];
+      setClickedPoints([newPoint]);
+
       const newCoords = { coords: [e.latlng.lng, e.latlng.lat] as [number,number] };
       setCoordsJSON([newCoords]);
     },
   });
-  return null;
+
+  return (
+    <>
+      {clickedPoints.map((point, idx) => (
+        <>
+          <Marker key={idx} position={point}>
+            <Popup>Selected Location</Popup>
+          </Marker>
+          <Circle key={`circle-${idx}`} center={point} radius={1000} pathOptions={{ color: 'red' }} />
+        </>
+      ))}
+    </>
+  );
 }
 
 export default function MapComponent() {
