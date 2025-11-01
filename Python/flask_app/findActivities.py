@@ -6,11 +6,14 @@ def find_activities(coords):
     lng = coords.get("lng")
     lat = coords.get("lat")
 
+    # check if location is in radius
+
+
     return {"status": "ok", "lng": lng, "lat": lat}
 
 
 def translate_tags(categories):
-    # mappings from user selected activities to API tags for 'type'
+    # mappings from user-selected activities to API tags for 'type'
     category_mapping = {
         'Coffee': ['cafe', 'coffee_shop'],
         'Dinner': ['restaurant'],

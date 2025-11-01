@@ -5,6 +5,7 @@ from Python.flask_app.findActivities import find_activities
 from Python.flask_app.services.CoordsService import parse_coords
 from Python.flask_app.services.TimeService import parse_time
 from Python.flask_app.services.ActivityService import parse_categories
+from Python.flask_app.storage.store_data import save_choices
 
 app = Flask(__name__)
 CORS(app)
@@ -20,70 +21,38 @@ def health():
     return jsonify({'status': 'healthy'}), 200
 
 
-@app.route('/getstartCoordinates', methods=['GET', 'POST'])
-def start_coordinates():
-    # POST JSON body
-    if request.method == 'POST':
-        if not request.is_json:
-            return jsonify({'error': 'expected JSON body'}), 400
-        data = request.get_json()
-        coordinates = parse_coords(data)
-        if not coordinates:
-            return jsonify({'error': 'invalid or missing coordinates'}), 400
-        # pass parsed coordinates to findActivities
-        final_coords = find_activities(coordinates)
+@app.route('/getChoices', methods=['POST'])
+def get_choices():
+    if not request.is_json:
+        return jsonify({'error': 'expected JSON body'}), 400
 
-        return jsonify(final_coords), 200
+    data = request.get_json()
 
-    return jsonify({'error': 'GET method not supported'}), 405
+    # Validate each field using existing services
+    coordinates = parse_coords(data)
+    if not coordinates:
+        return jsonify({'error': 'invalid or missing coordinates'}), 400
 
+    time = parse_time(data)
+    if not time:
+        return jsonify({'error': 'invalid or missing start_time'}), 400
 
-@app.route('/getStartTime', methods=['GET', 'POST'])
-def start_time():
-    # POST JSON body
-    if request.method == 'POST':
-        if not request.is_json:
-            return jsonify({'error': 'expected JSON body'}), 400
-        data = request.get_json()
-        time = parse_time(data)
-        if not time:
-            return jsonify({'error': 'missing start_time'}), 400
-        return jsonify({'start_time': start_time}), 200
+    categories = parse_categories(data)
+    if not categories:
+        return jsonify({'error': 'invalid or missing categories'}), 400
 
-    return jsonify({'error': 'GET method not supported'}), 405
+    if 'radius' not in data:
+        return jsonify({'error': 'missing radius'}), 400
 
+    try:
+        radius = int(data['radius'])
+    except (ValueError, TypeError):
+        return jsonify({'error': 'invalid radius value'}), 400
 
-@app.route('/getRadius', methods=['GET', 'POST'])
-def get_radius():
-    # POST JSON body
-    if request.method == 'POST':
-        if not request.is_json:
-            return jsonify({'error': 'expected JSON body'}), 400
-        data = request.get_json()
-        if 'radius' not in data:
-            return jsonify({'error': 'missing radius'}), 400
-        try:
-            radius = int(data['radius'])
-            return jsonify({'radius': radius}), 200
-        except (ValueError, TypeError):
-            return jsonify({'error': 'invalid radius value'}), 400
+    # Save to file
+    saved_data = save_choices(coordinates, time, categories, radius)
 
-    return jsonify({'error': 'GET method not supported'}), 405
-
-
-@app.route('/getCategories', methods=['GET', 'POST'])
-def get_categories():
-    #POST JSON body
-    if request.method == 'POST':
-        if not request.is_json:
-            return jsonify({'error': 'expected JSON body'}), 400
-        data = request.get_json()
-        categories = parse_categories(data)
-        if not categories:
-            return jsonify({'error': 'missing categories'}), 400
-        return jsonify({'categories': categories}), 200
-
-    return jsonify({'error': 'GET method not supported'}), 405
+    return jsonify({'status': 'ok', 'saved': saved_data}), 200
 
 
 if __name__ == '__main__':
