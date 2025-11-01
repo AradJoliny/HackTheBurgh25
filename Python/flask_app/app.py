@@ -7,6 +7,7 @@ from Python.flask_app.services.TimeService import parse_time
 app = Flask(__name__)
 CORS(app)
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -44,6 +45,25 @@ def start_time():
         return jsonify({'start_time': start_time}), 200
 
     return jsonify({'error': 'GET method not supported'}), 405
+
+
+@app.route('/getRadius', methods=['GET', 'POST'])
+def get_radius():
+    # POST JSON body
+    if request.method == 'POST':
+        if not request.is_json:
+            return jsonify({'error': 'expected JSON body'}), 400
+        data = request.get_json()
+        if 'radius' not in data:
+            return jsonify({'error': 'missing radius'}), 400
+        try:
+            radius = int(data['radius'])
+            return jsonify({'radius': radius}), 200
+        except (ValueError, TypeError):
+            return jsonify({'error': 'invalid radius value'}), 400
+
+    return jsonify({'error': 'GET method not supported'}), 405
+
 
 if __name__ == '__main__':
     # For development only. Use a proper WSGI server in production.
