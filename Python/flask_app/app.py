@@ -33,7 +33,8 @@ def start_coordinates():
 
     return jsonify({'error': 'GET method not supported'}), 405
 
-@app.route('/getStartTime', methods=['GET','POST'])
+
+@app.route('/getStartTime', methods=['GET', 'POST'])
 def start_time():
     # POST JSON body
     if request.method == 'POST':
@@ -65,6 +66,7 @@ def get_radius():
 
     return jsonify({'error': 'GET method not supported'}), 405
 
+
 @app.route('/getCategories', methods=['GET', 'POST'])
 def get_categories():
     #POST JSON body
@@ -76,6 +78,8 @@ def get_categories():
         if not categories:
             return jsonify({'error': 'missing categories'}), 400
         return jsonify({'categories': categories}), 200
+
+    return jsonify({'error': 'GET method not supported'}), 405
 
 
 if __name__ == '__main__':
