@@ -37,25 +37,30 @@ def calculate_date_duration(duration):
 
 # choose the first activity in the list that meets the constraints
 def select_next_activity(results, current_location, distances, used_types, remaining_time, current_time):
-    for venue in results:
+    for activity in results:
         # skip if activity type has already been done
-        if venue['type'] in used_types:
+        activity_types = set(activity.get('types', []))
+        if activity_types & used_types:
             continue
 
-        travel_time = get_travel_time(venue, current_location, distances)
-        activity_duration = activity_durations.get(venue['type'], 60)
+        travel_time = get_travel_time(activity, current_location, distances)
+
+        # just use the first type to determine duration, or default to 60
+        primary_type = activity['types'][0] if activity.get('types') else None
+        activity_duration = activity_durations.get(primary_type, 60)
 
         total_time_needed = travel_time + activity_duration
         if total_time_needed > remaining_time:
             continue
 
-        return venue
+        return activity
     # no suitable venue found
     return None
 
 
 # finds travel time between two venues using precomputed distances
 def get_travel_time(activity, current_location, distances):
+    # to-do: implement based on the structure of the distance matrix
     return travel_time
 
 # template for creating full schedule of activities
@@ -68,7 +73,8 @@ def create_schedule(duration, results, distances, start_time, user_location):
     used_types = set()
     remaining_time = total_minutes
 
-    while remaining_time > 30:
+    # shortest activity time is 60 minutes
+    while remaining_time >= 60:
         best_activity = select_next_activity(
             results,current_location,distances,used_types,remaining_time,current_time)
         if not best_activity:
@@ -80,7 +86,8 @@ def create_schedule(duration, results, distances, start_time, user_location):
         remaining_time -= travel_time
 
         # add activity
-        activity_duration = activity_durations.get(best_activity['type'], 60)
+        primary_type = best_activity['types'][0] if best_activity.get('types') else None
+        activity_duration = activity_durations.get(primary_type, 60)
         schedule.append({
             'venue': best_activity,
             'start_time': current_time,
@@ -91,5 +98,7 @@ def create_schedule(duration, results, distances, start_time, user_location):
         current_time += activity_duration
         remaining_time -= activity_duration
         current_location = best_activity
-        used_types.add(best_activity['type'])
+        # adding all types from this activity to used_types
+        if best_activity.get('types'):
+            used_types.add(best_activity['types'])
     return schedule
