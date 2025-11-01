@@ -1,6 +1,7 @@
 from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
 
+from Python.flask_app.findActivities import find_activities
 from Python.flask_app.services.CoordsService import parse_coords
 from Python.flask_app.services.TimeService import parse_time
 from Python.flask_app.services.ActivityService import parse_categories
@@ -29,7 +30,10 @@ def start_coordinates():
         coordinates = parse_coords(data)
         if not coordinates:
             return jsonify({'error': 'invalid or missing coordinates'}), 400
-        return jsonify(coordinates), 200
+        # pass parsed coordinates to findActivities
+        final_coords = find_activities(coordinates)
+
+        return jsonify(final_coords), 200
 
     return jsonify({'error': 'GET method not supported'}), 405
 
