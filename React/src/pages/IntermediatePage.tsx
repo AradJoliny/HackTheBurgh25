@@ -119,19 +119,53 @@ const IntermediatePage: React.FC = () => {
               }}
           >
             <h1>{labels[idx]}</h1>
-            <h1>{labels[idx]}</h1>
-            <p>
-              {schedule.activities && schedule.activities.length > 0
-                  ? schedule.activities.map((a) => a.venue.name).join(", ")
-                  : "No activities"}
-            </p>
-            <p className="time-info">
-              {schedule.start_time} - {schedule.end_time}
-            </p>
+            <div className="schedule-summary">
+              <p className="time-info">
+                <strong>{schedule.start_time} - {schedule.end_time}</strong>
+              </p>
+              <p>
+                <strong>Duration:</strong> {calculate_total_duration(schedule)} minutes (
+                {(calculate_total_duration(schedule) / 60).toFixed(1)} hours)
+              </p>
+              <p>
+                <strong>Activities:</strong> {schedule.activities?.length || 0}
+              </p>
+            </div>
+
+            {schedule.activities && schedule.activities.length > 0 ? (
+                <div className="activities-list">
+                  {schedule.activities.map((activity, actIdx) => (
+                      <div key={actIdx} className="activity-item">
+                        <p className="activity-name">
+                          <strong>{actIdx + 1}. {activity.venue.name}</strong>
+                        </p>
+                        <p className="activity-details">
+                          Start: {activity.start_time} |
+                          Duration: {activity.duration} mins |
+                          Travel: {activity.travel_time} mins
+                        </p>
+                        <p className="activity-meta">
+                          {activity.venue.rating && `★ ${activity.venue.rating}`}
+                          {activity.venue.rating && activity.venue.types?.length > 0 && " • "}
+                          {activity.venue.types?.slice(0, 3).join(", ")}
+                        </p>
+                      </div>
+                  ))}
+                </div>
+            ) : (
+                <p>No activities</p>
+            )}
           </div>
       ))}
     </div>
   );
+  function calculate_total_duration(schedule: Schedule): number {
+  if (!schedule.activities || schedule.activities.length === 0) return 0;
+
+  return schedule.activities.reduce((total, activity) => {
+    return total + activity.duration + activity.travel_time;
+  }, 0);
+}
 };
 
 export default IntermediatePage;
