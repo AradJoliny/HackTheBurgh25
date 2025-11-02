@@ -1,6 +1,8 @@
 ".idea/" 
 .idea/
-React/
+React/node_modules/
+React/dist/
+React/build/
 .env
 .env.local
 .end.production
