@@ -22,9 +22,7 @@ const Time: React.FC<Props> = ({selectedTime, setSelectedTime}) => {
   };
   const times = generateTimes();
 
-  const jsonString = selectedTime
-    ? JSON.stringify({ "start-time": selectedTime })
-    : "";
+
 
   return (
     <div className="d-flex flex-column align-items-start my-3">
@@ -37,9 +35,7 @@ const Time: React.FC<Props> = ({selectedTime, setSelectedTime}) => {
       />
 
       {selectedTime && <p>Selected start time: {selectedTime}</p>}
-      {selectedTime && (
-        <pre className="bg-light p-2 rounded">{jsonString}</pre>
-      )}
+
     </div>
   );
 };

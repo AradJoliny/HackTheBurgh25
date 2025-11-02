@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Dropdown from 'react-bootstrap/Dropdown';
 import Form from 'react-bootstrap/Form';
 import './CategoryDropdown.css';
@@ -29,29 +29,23 @@ const CategoryDropdown: React.FC<CategoryDropdownProps> = ({ items, selectedCate
         </Dropdown.Toggle>
 
         <Dropdown.Menu>
-          {items.map((item) => {
+          {items.map(item => {
             const isDisabled =
               !selectedCategories.includes(item) && selectedCategories.length >= 3;
 
             return (
               <Dropdown.Item
                 key={item}
+                as="div"
                 disabled={isDisabled}
+                onClick={() => toggleItem(item)}
               >
                 <Form.Check
                   type="checkbox"
                   label={item}
                   checked={selectedCategories.includes(item)}
-                  disabled={isDisabled}
-                  onChange={() => {
-                    if (selectedCategories.includes(item)) {
-                      setSelectedCategories(
-                        selectedCategories.filter((i) => i !== item)
-                      );
-                    } else {
-                      setSelectedCategories([...selectedCategories, item]);
-                    }
-                  }}
+                  readOnly
+
                 />
               </Dropdown.Item>
             );
