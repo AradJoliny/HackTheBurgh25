@@ -4,3 +4,31 @@ React/
 .env
 .env.local
 .end.production
+# JetBrains IDE
+.idea/
+*.iml
+
+
+# Node / TypeScript
+node_modules/
+dist/
+build/
+.env
+.DS_Store
+# JetBrains IDE
+.idea/
+*.iml
+
+
+# Node / TypeScript
+node_modules/
+dist/
+build/
+.env
+.DS_Store
+.idea
+.env
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
