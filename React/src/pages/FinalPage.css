@@ -1,0 +1,38 @@
+.final-page-container {
+  padding: 20px;
+}
+
+.section {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.title-section {
+  width: 100%;
+  text-align: center;
+}
+
+.time-container {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+}
+
+.time-section {
+  flex: 1;
+  text-align: center;
+}
+
+.time-section h2 {
+  margin: 0;
+}
+
+.title-section h2 {
+  margin: 0;
+}
+
+.button{
+    padding : 20px;
+}
