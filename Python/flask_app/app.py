@@ -1,15 +1,37 @@
-from flask import Flask, render_template, jsonify, request
-from flask_cors import CORS
+from flask import Flask, render_template, jsonify, request, make_response
+from flask_cors import CORS, cross_origin
 
-#from Python.flask_app.findActivities import find_activities
-from findActivities import find_activities
+from Python.flask_app.findActivities import find_activities
 from routeRequest import extract_travel_mode
 from services.Validation import *
 from schedular import create_schedule
-from storage.store_data import save_choices, clear_choices
+from Python.flask_app.storage.store_data import save_choices, clear_choices
 
 app = Flask(__name__)
-CORS(app)
+
+ALLOWED_ORIGINS = {"http://localhost:3000", "http://127.0.0.1:3000"}
+
+CORS(app, resources={r"/*": {
+    "origins": list(ALLOWED_ORIGINS),
+    "methods": ["GET", "POST", "OPTIONS"],
+    "allow_headers": ["Content-Type", "Authorization"],
+    "supports_credentials": True
+}})
+
+
+# Ensure headers exist on every response (including errors)
+@app.after_request
+def add_cors_headers(resp):
+    origin = request.headers.get("Origin")
+    if origin in ALLOWED_ORIGINS:
+        resp.headers["Access-Control-Allow-Origin"] = origin
+        resp.headers["Vary"] = "Origin"
+        resp.headers["Access-Control-Allow-Credentials"] = "true"
+        resp.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+        # Echo requested headers so preflight succeeds even with custom headers
+        requested = request.headers.get("Access-Control-Request-Headers", "Content-Type, Authorization")
+        resp.headers["Access-Control-Allow-Headers"] = requested
+    return resp
 
 
 @app.route('/')
@@ -22,9 +44,18 @@ def health():
     return jsonify({'status': 'healthy'}), 200
 
 
-# saving user choices
-@app.route('/getChoices', methods=['POST'])
+@app.route('/getChoices', methods=['POST', 'OPTIONS'])
+@cross_origin(
+    origins=list(ALLOWED_ORIGINS),
+    methods=['POST', 'OPTIONS'],
+    allow_headers=['Content-Type', 'Authorization'],
+    supports_credentials=True
+)
 def get_choices():
+    # Let CORS preflight succeed
+    if request.method == 'OPTIONS':
+        return '', 204
+
     if not request.is_json:
         return jsonify({'error': 'expected JSON body'}), 400
 
@@ -62,29 +93,63 @@ def get_choices():
     return jsonify({'status': 'ok', 'saved': saved_data}), 200
 
 
-# generating schedules based on saved choices
-@app.route('/giveSchedules', methods=['POST'])
+@app.route('/giveActivities', methods=['GET'])
+def give_activities():
+    activities = find_activities()
+
+    if activities.get("status") != "ok":
+        return jsonify(activities), 400
+
+    return jsonify(activities), 200
+
+
+# ----------------------------------------------------------
+
+# duration = ["short", "medium", "long"]
+# results = find_activities()
+# activities = results['activities']
+# start_time = results['choices']['start_time']
+# user_location = results['choices']['coordinates']
+# travel_mode = results['choices']['travel_mode']
+
+@app.route('/giveSchedule', methods=['GET', 'OPTIONS'])
 def give_schedule():
-    durations = ["short", "medium", "long"]
+    if request.method == 'OPTIONS':
+        return make_response('', 204)
+
     results = find_activities()
+    if results.get("status") != "ok":
+        return jsonify(results), 400
+
     activities = results['activities']
     start_time = results['choices']['start_time']
     user_location = results['choices']['coordinates']
-    travel_mode = extract_travel_mode(results['choices'])
+    travel_mode = results['choices']['travel_mode']
 
-    schedules = []
-    for duration in durations:
-        schedule = create_schedule(duration=duration, results=activities, start_time=start_time,
-                                   user_location=user_location, travel_mode=travel_mode)
+    # Debug logging
+    print(f"Found {len(activities)} activities")
+    print(f"Start time: {start_time}")
+    print(f"User location: {user_location}")
+    print(f"Travel mode: {travel_mode}")
 
-        if schedule.get("status") != "ok":
-            return jsonify(schedule), 400
+    # Generate three schedules for each duration
+    schedules = {}
+    for duration in ["short", "medium", "long"]:
+        print(f"\n=== Creating {duration} schedule ===")
+        schedule = create_schedule(
+            duration=duration,
+            results=activities,
+            start_time=start_time,
+            user_location=user_location,
+            travel_mode=travel_mode
+        )
+        print(f"{duration} schedule has {len(schedule)} activities")
+        schedules[duration] = schedule
 
-        schedules.append(schedule)
+    return jsonify({"status": "ok", "schedules": schedules}), 200
 
-    return jsonify(schedules), 200
 
 
 if __name__ == '__main__':
     # For development only. Use a proper WSGI server in production.
-    app.run(debug=True)
+    app.run(host='127.0.0.1', port=5050, debug=True)

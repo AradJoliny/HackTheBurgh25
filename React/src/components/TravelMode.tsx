@@ -6,7 +6,7 @@ type Props = {
   setSelectedMode: (mode: string) => void;
 };
 
-const travelModes = ["Walk", "Drive", "Transit"];
+const travelModes = ["WALK", "DRIVE", "TRANSIT"];
 
 const TravelMode: React.FC<Props> = ({ selectedMode, setSelectedMode }) => {
   const removeMode = (e: React.MouseEvent) => {

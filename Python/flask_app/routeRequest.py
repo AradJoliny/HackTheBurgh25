@@ -2,8 +2,6 @@ from google.maps import routing_v2
 from dotenv import load_dotenv
 import os
 
-from storage.store_data import load_choices
-
 # Load environment variables from .env file
 load_dotenv()
 
@@ -52,7 +50,7 @@ def calculate_route(origin, destination, travel_mode):
 
             )
         ),
-        travel_mode=mode_enum
+        travel_mode=mode_enum,
     )
     response = client.compute_routes(
         request=request,

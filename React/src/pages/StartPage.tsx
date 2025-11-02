@@ -1,4 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
+import {BrowserRouter as Router, Routes, Route, useNavigate} from "react-router-dom";
+import StartPage from "../pages/StartPage";
+import IntermediatePage from "../pages/IntermediatePage";
+import FinalPage from "../pages/FinalPage";
 import "../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Map from "../components/StartMap/Map";
@@ -10,7 +14,8 @@ import Title from "../components/Title";
 import CategoryDropdown from "../components/CategoryDropdown/CategoryDropdown";
 import { useNavigate } from "react-router-dom";
 
-const StartPage: React.FC = () => {
+const App: React.FC = () => {
+    const navigate = useNavigate();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [coords, setCoords] = useState<[number, number]>([55.9533, -3.1883]);
@@ -52,8 +57,10 @@ const StartPage: React.FC = () => {
 
     console.log("Sending to backend:", payload);
 
+    const API_BASE = 'http://127.0.0.1:5050';
+
     try {
-      const response = await fetch("http://localhost:5000/getChoices", {
+      const response = await fetch(`${API_BASE}/getChoices`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -115,6 +122,9 @@ const StartPage: React.FC = () => {
 
       <footer className="submit-footer">
         <SubmitButton onClick={handleSubmit} />
+          <button className="page-button" onClick={() => navigate("/intermediate")}>
+            Go to Final Page
+          </button>
       </footer>
     </div>
   );

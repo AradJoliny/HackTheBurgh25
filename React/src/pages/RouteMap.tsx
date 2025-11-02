@@ -14,7 +14,7 @@ const libraries: "geometry"[] = ["geometry"];
 
 const RouteMap: React.FC<RouteMapProps> = ({ encodedPolyline }) => {
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY!,
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY!,
     libraries,
   });
 
@@ -37,8 +37,8 @@ const RouteMap: React.FC<RouteMapProps> = ({ encodedPolyline }) => {
 
     const pathParam = originalPath.map((p) => `${p.lat},${p.lng}`).join("|");
     const snapUrl = `https://roads.googleapis.com/v1/snapToRoads?path=${pathParam}&interpolate=true&key=${
-      import.meta.env.VITE_GOOGLE_MAPS_API_KEY
-    }`;
+        process.env.REACT_APP_GOOGLE_MAPS_API_KEY
+      }`;
 
     fetch(snapUrl)
       .then((res) => res.json())
