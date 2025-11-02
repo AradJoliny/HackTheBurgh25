@@ -63,39 +63,35 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="app bg-light min-vh-100 d-flex flex-column justify-content-between">
+    <div className="app">
       {/* HEADER */}
-      <header className="text-center py-4 shadow-sm bg-white">
+      <header className="app-header">
         <Title />
       </header>
 
       {/* DROPDOWNS SIDE BY SIDE */}
-      <div className="d-flex gap-3 flex-wrap justify-content-center mb-3">
-        <div className="flex-grow-1" style={{ minWidth: "200px" }}>
-          <CategoryDropdown items={items} selectedCategories={selectedCategories} setSelectedCategories={setSelectedCategories}/>
-        </div>
-        <div className="flex-grow-1" style={{ minWidth: "200px" }}>
-          <Time selectedTime={selectedTime} setSelectedTime={setSelectedTime}  />
-        </div>
-        <div className="flex-grow-1" style={{ minWidth: "200px" }}>
-          <TravelMode selectedMode={travelMode} setSelectedMode={setTravelMode}/>
-        </div>
+      <div className="dropdowns-container">
+        <CategoryDropdown
+          items={items}
+          selectedCategories={selectedCategories}
+          setSelectedCategories={setSelectedCategories}
+        />
+        <Time selectedTime={selectedTime} setSelectedTime={setSelectedTime} />
+        <TravelMode selectedMode={travelMode} setSelectedMode={setTravelMode} />
       </div>
 
       {/* MAP + SLIDER */}
-      <main className="container mb-4 d-flex justify-content-center">
-        <div className="col-md-8 col-lg-6">
-          <div className="map-container shadow rounded mb-3">
-            <Map radius={radius * 1000} coords={coords} setCoords={setCoords} />
-          </div>
-          <div className="slider-container">
-            <Slider radius={radius} setRadius={setRadius} />
-          </div>
+      <main className="map-slider-container">
+        <div className="map-wrapper">
+          <Map radius={radius * 1000} coords={coords} setCoords={setCoords} />
+        </div>
+        <div className="slider-wrapper">
+          <Slider radius={radius} setRadius={setRadius} />
         </div>
       </main>
 
       {/* SUBMIT BUTTON */}
-      <footer className="text-center py-4 bg-white shadow-sm">
+      <footer className="submit-footer">
         <SubmitButton onClick={handleSubmit} />
       </footer>
     </div>

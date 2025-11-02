@@ -1,68 +1,161 @@
-/* Main App container */
-.App {
-    min-height: 100vh;
-    width: 100%;
-    display: flex;
-    flex-direction: column; /* stack header, dropdowns, map, footer */
-    align-items: center;
-    justify-content: flex-start;
-    background-color: #ffb7ce;
-    margin: 0;
-    padding: 20px;
-    box-sizing: border-box;
-}
-
-/* Content container for dropdowns */
-.content {
-    padding: 20px;
-    background-color: white;
-    border-radius: 10px;
-    display: flex;
-    gap: 20px; /* space between dropdowns */
-    align-items: flex-start;
-    flex-wrap: wrap; /* stack on small screens */
-    justify-content: flex-start;
-    flex-direction: column;
-}
-
-/* Make dropdown buttons same height */
-.content .btn, .content .dropdown-toggle {
-  height: 40px; /* or match Bootstrap's standard height */
-  display: flex;
-  align-items: center; /* vertically center text */
-}
-
-/* Map container */
-.map-container {
-    height: 400px; /* smaller map */
-    width: 100%;
-    max-width: 800px; /* optional max width */
-    border: 2px solid #ddd;
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 15px;
-}
-
-/* Slider under map */
-.slider-container input.form-range {
-    width: 100%; /* match map width */
-}
-
-/* Buttons styling */
-button {
-    border-radius: 8px;
-}
-
-/* Body background */
+/* -------------------------------
+   Body & Main App Container
+---------------------------------*/
 body {
-    background-color: #ffb7ce;
     margin: 0;
     padding: 0;
     font-family: 'Segoe UI', sans-serif;
+    background-color: #F5F5F5; /* soft neutral background */
+    color: #343A40; /* dark gray text */
 }
 
-/* Dropdown menu scrollable */
+.app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: #F5F5F5;
+}
+
+/* -------------------------------
+   Header / Title
+---------------------------------*/
+.app-header {
+    text-align: center;
+    padding: 1.5rem;
+    background-color: #FFFFFF;
+    color: #212529; /* dark header text */
+    font-weight: 700;
+    font-size: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* -------------------------------
+   Dropdowns Container
+---------------------------------*/
+.dropdowns-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.dropdowns-container > * {
+    flex-grow: 1;
+    min-width: 200px;
+    max-width: 250px;
+}
+
+.dropdown-toggle {
+    background-color: #007BFF; /* professional blue */
+    color: #FFFFFF;
+    border-radius: 8px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+}
+
+.dropdown-toggle:hover, .dropdown-toggle:focus {
+    background-color: #0056b3;
+}
+
 .dropdown-menu {
-    max-height: 300px;
+    max-height: 250px;
     overflow-y: auto;
+}
+
+/* Selected items text under dropdown */
+.selected-items-display {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+/* -------------------------------
+   Map & Slider
+---------------------------------*/
+.map-slider-container {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.map-wrapper {
+    width: 100%;
+    max-width: 600px;
+    height: 400px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    background-color: #FFFFFF;
+    margin-bottom: 1rem;
+}
+
+.slider-wrapper {
+    width: 100%;
+    max-width: 600px;
+}
+
+.slider-container input.form-range {
+    width: 100%;
+}
+
+/* -------------------------------
+   Buttons
+---------------------------------*/
+button, .btn, .submit-button {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+button.primary, .submit-button {
+    background-color: #007BFF;
+    color: #FFFFFF;
+    border: none;
+    padding: 0.5rem 1.5rem;
+}
+
+button.primary:hover, .submit-button:hover {
+    background-color: #0056b3;
+    cursor: pointer;
+}
+
+button.secondary {
+    background-color: #6C757D;
+    color: #FFFFFF;
+    border: none;
+}
+
+button.secondary:hover {
+    background-color: #495057;
+}
+
+/* -------------------------------
+   Footer
+---------------------------------*/
+.submit-footer {
+    text-align: center;
+    padding: 1.5rem;
+    background-color: #FFFFFF;
+    box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+}
+
+/* -------------------------------
+   Responsive adjustments
+---------------------------------*/
+@media (max-width: 768px) {
+    .dropdowns-container {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .map-wrapper, .slider-wrapper {
+        max-width: 100%;
+    }
 }
