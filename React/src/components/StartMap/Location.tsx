@@ -1,6 +1,3 @@
+function MainLocation() {}
 
-function MainLocation (){
-
-}
-
-export default MainLocation
+export default MainLocation;

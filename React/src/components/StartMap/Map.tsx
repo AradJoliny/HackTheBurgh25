@@ -10,7 +10,7 @@ type MapComponentProps = {
   coords: [number, number] | null;
   setCoords: (coords: [number, number]) => void;
   radius: number;
-}
+};
 
 export default function MapComponent({ coords, setCoords, radius }: MapComponentProps) {
   return (
