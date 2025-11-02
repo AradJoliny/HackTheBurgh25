@@ -2,7 +2,7 @@ from google.maps import routing_v2
 from dotenv import load_dotenv
 import os
 
-from Python.flask_app.storage.store_data import load_choices
+from storage.store_data import load_choices
 
 # Load environment variables from .env file
 load_dotenv()

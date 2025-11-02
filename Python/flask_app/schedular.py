@@ -1,4 +1,4 @@
-from Python.flask_app.routeRequest import calculate_route
+from routeRequest import calculate_route
 
 # structure for looking up duration of each activity
 activity_durations = {

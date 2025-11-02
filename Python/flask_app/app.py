@@ -1,11 +1,12 @@
 from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
 
-from Python.flask_app.findActivities import find_activities
-from Python.flask_app.routeRequest import extract_travel_mode
-from Python.flask_app.services.Validation import *
-from Python.flask_app.schedular import create_schedule
-from Python.flask_app.storage.store_data import save_choices, clear_choices
+#from Python.flask_app.findActivities import find_activities
+from findActivities import find_activities
+from routeRequest import extract_travel_mode
+from services.Validation import *
+from schedular import create_schedule
+from storage.store_data import save_choices, clear_choices
 
 app = Flask(__name__)
 CORS(app)
