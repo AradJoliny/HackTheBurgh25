@@ -7,9 +7,13 @@ type SubmitButtonProps = {
 const SubmitButton: React.FC<SubmitButtonProps> = ({ onClick }) => {
 return(
 
-    <div className="d-grid gap-2 col-6 mx-auto">
-        <button className="btn btn-light" type="button" onClick={onClick}>Submit</button>
-    </div>
+    <button
+      type="button"
+      className="btn btn-primary"
+      onClick={onClick} // <-- make sure this is here!
+    >
+      Submit
+    </button>
   );
 }
 export default SubmitButton;
