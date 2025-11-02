@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 
+// declare prop shape
 interface RouteMapProps {
   encodedPolyline: string;
 }
@@ -12,27 +13,36 @@ const mapContainerStyle = {
 
 const libraries: "geometry"[] = ["geometry"];
 
+//
 const RouteMap: React.FC<RouteMapProps> = ({ encodedPolyline }) => {
+  // hold a ref to map
   const mapRef = useRef<google.maps.Map | null>(null);
+  // todo remove snapped path
   const [snappedPath, setSnappedPath] = useState<
     { lat: number; lng: number }[]
   >([]);
 
+  // load api key to google maps
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
     libraries: libraries,
   });
 
-  // Decode the original encoded polyline
+  // Decode encoded polyline once map is loaded
   const decodedPath = isLoaded
     ? google.maps.geometry.encoding.decodePath(encodedPolyline)
     : [];
 
+  // Set default mode to driving for now
+  const travelMode = google.maps.TravelMode.DRIVING;
+
+  // Convert Latlng objects to simple {lat, lng} format
   const originalPath = decodedPath.map((point) => ({
     lat: point.lat(),
     lng: point.lng(),
   }));
 
+  // Snap to roads TODO change this to call route api
   useEffect(() => {
     if (!isLoaded || originalPath.length === 0) return;
 
