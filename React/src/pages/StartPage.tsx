@@ -1,6 +1,11 @@
-import React from "react";
-import {BrowserRouter as Router, Routes, Route, useNavigate} from "react-router-dom";
-import StartPage from "../pages/StartPage";
+import React, { useState } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useNavigate,
+} from "react-router-dom";
+// import StartPage from "../pages/StartPage";
 import IntermediatePage from "../pages/IntermediatePage";
 import FinalPage from "../pages/FinalPage";
 import "../App.css";
@@ -12,16 +17,14 @@ import Time from "../components/Time";
 import TravelMode from "../components/TravelMode";
 import Title from "../components/Title";
 import CategoryDropdown from "../components/CategoryDropdown/CategoryDropdown";
-import { useNavigate } from "react-router-dom";
 
-const App: React.FC = () => {
-    const navigate = useNavigate();
+const StartPage: React.FC = () => {
+  const navigate = useNavigate();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [coords, setCoords] = useState<[number, number]>([55.9533, -3.1883]);
   const [radius, setRadius] = useState<number>(1);
   const [travelMode, setTravelMode] = useState<string>("");
-  const navigate = useNavigate();
 
   const items = [
     "Coffee",
@@ -57,7 +60,7 @@ const App: React.FC = () => {
 
     console.log("Sending to backend:", payload);
 
-    const API_BASE = 'http://127.0.0.1:5050';
+    const API_BASE = "http://127.0.0.1:5050";
 
     try {
       const response = await fetch(`${API_BASE}/getChoices`, {
@@ -122,9 +125,12 @@ const App: React.FC = () => {
 
       <footer className="submit-footer">
         <SubmitButton onClick={handleSubmit} />
-          <button className="page-button" onClick={() => navigate("/intermediate")}>
-            Go to Final Page
-          </button>
+        <button
+          className="page-button"
+          onClick={() => navigate("/intermediate")}
+        >
+          Go to Final Page
+        </button>
       </footer>
     </div>
   );
