@@ -1,7 +1,7 @@
 from flask import Flask, render_template, jsonify, request, make_response
 from flask_cors import CORS, cross_origin
 
-from findActivities import find_activities
+from Python.flask_app.findActivities import find_activities
 from routeRequest import extract_travel_mode
 from services.Validation import *
 from schedular import create_schedule
@@ -18,6 +18,7 @@ CORS(app, resources={r"/*": {
     "supports_credentials": True
 }})
 
+
 # Ensure headers exist on every response (including errors)
 @app.after_request
 def add_cors_headers(resp):
@@ -31,6 +32,7 @@ def add_cors_headers(resp):
         requested = request.headers.get("Access-Control-Request-Headers", "Content-Type, Authorization")
         resp.headers["Access-Control-Allow-Headers"] = requested
     return resp
+
 
 @app.route('/')
 def index():
@@ -110,7 +112,7 @@ def give_activities():
 # user_location = results['choices']['coordinates']
 # travel_mode = results['choices']['travel_mode']
 
-@app.route('/giveSchedule', methods=['GET','OPTIONS'])
+@app.route('/giveSchedule', methods=['GET', 'OPTIONS'])
 def give_schedule():
     if request.method == 'OPTIONS':
         return make_response('', 204)
@@ -124,19 +126,28 @@ def give_schedule():
     user_location = results['choices']['coordinates']
     travel_mode = results['choices']['travel_mode']
 
+    # Debug logging
+    print(f"Found {len(activities)} activities")
+    print(f"Start time: {start_time}")
+    print(f"User location: {user_location}")
+    print(f"Travel mode: {travel_mode}")
+
     # Generate three schedules for each duration
     schedules = {}
     for duration in ["short", "medium", "long"]:
+        print(f"\n=== Creating {duration} schedule ===")
         schedule = create_schedule(
-            duration=duration,  # pass string, not list
+            duration=duration,
             results=activities,
             start_time=start_time,
             user_location=user_location,
             travel_mode=travel_mode
         )
+        print(f"{duration} schedule has {len(schedule)} activities")
         schedules[duration] = schedule
 
     return jsonify({"status": "ok", "schedules": schedules}), 200
+
 
 
 if __name__ == '__main__':

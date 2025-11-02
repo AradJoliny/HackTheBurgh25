@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {BrowserRouter as Router, Routes, Route, useNavigate} from "react-router-dom";
 import StartPage from "../pages/StartPage";
 import IntermediatePage from "../pages/IntermediatePage";
 import FinalPage from "../pages/FinalPage";
@@ -15,6 +15,7 @@ import Title from "../components/Title";
 import CategoryDropdown from "../components/CategoryDropdown/CategoryDropdown";
 
 const App: React.FC = () => {
+    const navigate = useNavigate();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [coords, setCoords] = useState<[number, number] | null>(null);
@@ -103,6 +104,9 @@ const App: React.FC = () => {
       {/* SUBMIT BUTTON */}
       <footer className="submit-footer">
         <SubmitButton onClick={handleSubmit} />
+          <button className="page-button" onClick={() => navigate("/intermediate")}>
+            Go to Final Page
+          </button>
       </footer>
     </div>
   );

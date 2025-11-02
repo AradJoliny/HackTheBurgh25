@@ -135,4 +135,5 @@ def create_schedule(duration, results, start_time, user_location, travel_mode):
         # adding all types from this activity to used_types
         if primary_type:
             used_types.add(primary_type)
+
     return schedule
