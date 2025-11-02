@@ -55,6 +55,7 @@ def search_nearby_places(coords, types, radius_meters):
 
     activities = []
     seen_place_ids = set()  # Avoid duplicates
+    selected_types = set(types)
 
     try:
         for place_type in types:
@@ -80,7 +81,7 @@ def search_nearby_places(coords, types, radius_meters):
 
                 seen_place_ids.add(place_id)
 
-                place_types = [t for t in place.get("types", []) if t in VALID_TYPES]
+                place_types = [t for t in place.get("types", []) if t in selected_types]
                 activities.append({
                     "name": place.get("name", "Unknown"),
                     "address": place.get("vicinity", ""),
