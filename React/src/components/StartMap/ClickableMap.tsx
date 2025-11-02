@@ -1,8 +1,6 @@
-
-import { useState } from 'react';
-import {Marker, Popup, useMapEvents, Circle} from 'react-leaflet';
-import {LatLngExpression} from 'leaflet';
-
+import { useState } from "react";
+import { Marker, Popup, useMapEvents, Circle } from "react-leaflet";
+import { LatLngExpression } from "leaflet";
 
 export default function ClickableMap({
   setCoordsJSON,
@@ -20,7 +18,9 @@ export default function ClickableMap({
       const newPoint: LatLngExpression = [e.latlng.lat, e.latlng.lng];
       setClickedPoints([newPoint]);
 
-      const newCoords = { coords: [e.latlng.lng, e.latlng.lat] as [number,number] };
+      const newCoords = {
+        coords: [e.latlng.lng, e.latlng.lat] as [number, number],
+      };
       setCoordsJSON([newCoords]);
     },
   });
@@ -32,7 +32,11 @@ export default function ClickableMap({
           <Marker position={point}>
             <Popup>Selected Location</Popup>
           </Marker>
-          <Circle center={point} radius={radius} pathOptions={{ color: 'blue' }} />
+          <Circle
+            center={point}
+            radius={radius}
+            pathOptions={{ color: "blue" }}
+          />
         </div>
       ))}
     </>

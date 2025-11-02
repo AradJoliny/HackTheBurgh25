@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import Dropdown from 'react-bootstrap/Dropdown';
-import Form from 'react-bootstrap/Form';
-import './CategoryDropdown.css';
+import Dropdown from "react-bootstrap/Dropdown";
+import Form from "react-bootstrap/Form";
+import "./CategoryDropdown.css";
 
 interface CategoryDropdownProps {
   items: string[];
@@ -12,13 +12,13 @@ const CategoryDropdown: React.FC<CategoryDropdownProps> = ({ items }) => {
 
   // convert to json
   const selectedItemsJSON = JSON.stringify({
-    categories: selectedItems
+    categories: selectedItems,
   });
 
   const toggleItem = (item: string) => {
-    setSelectedItems(prev => {
+    setSelectedItems((prev) => {
       if (prev.includes(item)) {
-        return prev.filter(i => i !== item);
+        return prev.filter((i) => i !== item);
       } else {
         if (prev.length < 3) {
           return [...prev, item];
@@ -43,14 +43,19 @@ const CategoryDropdown: React.FC<CategoryDropdownProps> = ({ items }) => {
 
         <Dropdown.Menu>
           {items.map((item) => {
-            const isDisabled = !selectedItems.includes(item) && selectedItems.length >= 3;
+            const isDisabled =
+              !selectedItems.includes(item) && selectedItems.length >= 3;
 
             return (
               <Dropdown.Item
                 key={item}
                 as="div"
                 onClick={() => toggleItem(item)}
-                className={isDisabled ? 'dropdown-item-disabled' : 'dropdown-item-enabled'}
+                className={
+                  isDisabled
+                    ? "dropdown-item-disabled"
+                    : "dropdown-item-enabled"
+                }
               >
                 <Form.Check
                   type="checkbox"
@@ -68,7 +73,7 @@ const CategoryDropdown: React.FC<CategoryDropdownProps> = ({ items }) => {
 
       {selectedItems.length > 0 && (
         <div className="selected-items-display">
-          Selected: {selectedItems.join(', ')}
+          Selected: {selectedItems.join(", ")}
         </div>
       )}
     </>
