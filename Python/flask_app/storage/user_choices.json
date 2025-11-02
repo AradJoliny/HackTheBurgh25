@@ -1,14 +1,14 @@
 {
   "coordinates": {
-    "lat": 55.9666262928013,
-    "lng": -3.1756496429443364
+    "lat": 55.9533,
+    "lng": -3.1883
   },
-  "start_time": "09:30",
+  "start_time": "10:30",
   "categories": [
-    "Outdoor",
-    "Drinks",
-    "Coffee"
+    "Movies",
+    "Museum",
+    "Drinks"
   ],
-  "radius": 2000,
+  "radius": 3000,
   "travel_mode": "WALK"
 }

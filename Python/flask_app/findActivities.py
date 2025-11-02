@@ -53,33 +53,49 @@ def search_nearby_places(coords, types, radius_meters):
 
     gmaps = googlemaps.Client(key=api_key)
 
-    # Google Places nearby search
+    activities = []
+    seen_place_ids = set()  # Avoid duplicates
+
     try:
-        places_result = gmaps.places_nearby(
-            location=(coords['lat'], coords['lng']),
-            radius=radius_meters,
-            type=types[0] if types else None,  # googlemaps only supports one type at a time
-        )
+        for place_type in types:
+            places_result = gmaps.places_nearby(
+                location=(coords['lat'], coords['lng']),
+                radius=radius_meters,
+                type=place_type
+            )
 
-        activities = []
-        for place in places_result.get("results", []):
-            place_types = [t for t in place.get("types", []) if t in VALID_TYPES]
-            activities.append({
-                "name": place.get("name", "Unknown"),
-                "address": place.get("vicinity", ""),
-                "types": place_types,
-                "rating": place.get("rating"),
-                "location": {
-                    "lat": place["geometry"]["location"]["lat"],
-                    "lng": place["geometry"]["location"]["lng"]
-                }
-            })
+            print(f"Found {len(places_result.get('results', []))} places for type '{place_type}'")
 
-        return activities
+            for place in places_result.get("results", []):
+                place_id = place.get("place_id")
 
+                # Skip if we've already added this place
+                if place_id in seen_place_ids:
+                    continue
+
+                name = place.get("name", "")
+
+                if name.lower() in ['edinburgh', 'scotland', 'united kingdom']:
+                    continue
+
+                seen_place_ids.add(place_id)
+
+                place_types = [t for t in place.get("types", []) if t in VALID_TYPES]
+                activities.append({
+                    "name": place.get("name", "Unknown"),
+                    "address": place.get("vicinity", ""),
+                    "types": place_types,
+                    "rating": place.get("rating"),
+                    "location": {
+                        "lat": place["geometry"]["location"]["lat"],
+                        "lng": place["geometry"]["location"]["lng"]
+                    }
+                })
     except Exception as e:
         print(f"Error calling Google Places API: {e}")
         return []
+
+    return activities
 
 
 def translate_tags(categories):
