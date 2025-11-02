@@ -27,8 +27,8 @@ const RouteMap: React.FC<RouteMapProps> = ({ activities }) => {
     .join('|');
 
   // Build Google Maps Directions URL
-  const mapsUrl = `https://www.google.com/maps/embed/v1/directions?key=AIzaSyCDzUuz6jj6X9VJUBYv3BLyuu3ChWSo1JI&origin=${origin.lat},${origin.lng}&destination=${destination.lat},${destination.lng}${waypoints ? `&waypoints=${waypoints}` : ''}&mode=walking`;
-
+    // @ts-ignore
+    const mapsUrl = `https://www.google.com/maps/embed/v1/directions?key=${import.meta.env.GOOGLE_PLACES_API_KEY}&origin=${origin.lat},${origin.lng}&destination=${destination.lat},${destination.lng}${waypoints ? `&waypoints=${waypoints}` : ''}&mode=walking`;
   return (
     <iframe
       width="100%"
