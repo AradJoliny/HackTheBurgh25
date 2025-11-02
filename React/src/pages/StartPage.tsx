@@ -71,7 +71,7 @@ const StartPage: React.FC = () => {
 
       const data = await response.json();
       console.log("Response from backend:", data);
-      navigate("/intermediate");
+      navigate("/IntermediatePage");
     } catch (error) {
       console.error("Error sending data:", error);
     }
@@ -129,7 +129,7 @@ const StartPage: React.FC = () => {
           className="page-button"
           onClick={() => navigate("/intermediate")}
         >
-          Go to Final Page
+          Submit
         </button>
       </footer>
     </div>
