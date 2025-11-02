@@ -52,7 +52,7 @@ def get_choices():
         return jsonify({'error': 'invalid radius value'}), 400
 
     travel_mode = data['travel_mode']
-    if travel_mode not in ['DRIVE', 'WALK', 'TRANSIT']:
+    if travel_mode not in ['Drive', 'Walk', 'Transit']:
         return jsonify({'error': 'invalid travel_mode'}), 400
 
     # clear before saving new choices
