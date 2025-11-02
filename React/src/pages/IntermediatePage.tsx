@@ -2,11 +2,25 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
 
+interface Activity {
+  venue: {
+    name: string;
+    address: string;
+    types: string[];
+    rating?: number;
+    location: { lat: number; lng: number };
+  };
+  travel_time: number;
+  start_time: string;
+  duration: number;
+}
+
 interface Schedule {
   duration: string;
-  activities: any[]; // Adjust type based on your actual data structure
+  activities: Activity[];
   start_time: string;
   end_time: string;
+  total_activities: number;
   // Add other fields your API returns
 }
 
@@ -96,24 +110,25 @@ const IntermediatePage: React.FC = () => {
       </div>
 
       {schedules.map((schedule, idx) => (
-        <div
-          key={idx}
-          className="activity-button"
-          onClick={() => {
-            // Store selected schedule in localStorage to access in FinalPage
-            localStorage.setItem("selectedSchedule", JSON.stringify(schedule));
-            navigate("/final");
-          }}
-        >
-          <h1>{labels[idx] || schedule.duration}</h1>
-          <p>
-            {schedule.activities?.map((a) => a.name || a).join(", ") ||
-              "No activities"}
-          </p>
-          <p className="time-info">
-            {schedule.start_time} - {schedule.end_time}
-          </p>
-        </div>
+          <div
+              key={idx}
+              className="activity-button"
+              onClick={() => {
+                // Store selected schedule in localStorage to access in FinalPage
+                navigate("/final", {state: {selectedSchedule: schedule}});
+              }}
+          >
+            <h1>{labels[idx]}</h1>
+            <h1>{labels[idx]}</h1>
+            <p>
+              {schedule.activities && schedule.activities.length > 0
+                  ? schedule.activities.map((a) => a.venue.name).join(", ")
+                  : "No activities"}
+            </p>
+            <p className="time-info">
+              {schedule.start_time} - {schedule.end_time}
+            </p>
+          </div>
       ))}
     </div>
   );

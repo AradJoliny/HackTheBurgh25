@@ -4,6 +4,7 @@ from flask_cors import CORS, cross_origin
 from Python.flask_app.findActivities import find_activities
 from routeRequest import extract_travel_mode
 from services.Validation import *
+from datetime import datetime, timedelta
 from schedular import create_schedule
 from Python.flask_app.storage.store_data import save_choices, clear_choices
 
@@ -185,15 +186,32 @@ def give_schedule():
     schedules = {}
     for duration in ["short", "medium", "long"]:
         print(f"\n=== Creating {duration} schedule ===")
-        schedule = create_schedule(
+        schedule_activities = create_schedule(
             duration=duration,
             results=activities,
             start_time=start_time,
             user_location=user_location,
             travel_mode=travel_mode
         )
-        print(f"{duration} schedule has {len(schedule)} activities")
-        schedules[duration] = schedule
+        # Calculate end time from last activity
+        if schedule_activities:
+            last_activity = schedule_activities[-1]
+            end_time_obj = datetime.strptime(last_activity['start_time'], "%H:%M")
+            end_time_obj += timedelta(minutes=last_activity['duration'])
+            end_time = end_time_obj.strftime("%H:%M")
+        else:
+            end_time = start_time
+
+        # Format as object with metadata
+        schedules[duration] = {
+            "duration": duration,
+            "activities": schedule_activities,  # Array of {venue, travel_time, start_time, duration}
+            "start_time": start_time,
+            "end_time": end_time,
+            "total_activities": len(schedule_activities)
+        }
+
+        print(f"{duration} schedule has {len(schedule_activities)} activities")
 
     return jsonify({"status": "ok", "schedules": schedules}), 200
 
