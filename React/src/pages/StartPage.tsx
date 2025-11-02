@@ -5,12 +5,13 @@ import FinalPage from "../pages/FinalPage";
 import "../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Map from "../components/StartMap/Map";
-import SubmitButton from "../components/StartMap/SubmitButton";
+//import SubmitButton from "../components/StartMap/SubmitButton";
 import Slider from "../components/StartMap/Slider";
 import Time from "../components/Time";
 import TravelMode from "../components/TravelMode";
 import Title from "../components/Title";
 import CategoryDropdown from "../components/CategoryDropdown/CategoryDropdown";
+
 
 const StartPage: React.FC = () => {
     const navigate = useNavigate();
@@ -118,10 +119,14 @@ const StartPage: React.FC = () => {
       </main>
 
       <footer className="submit-footer">
-        <SubmitButton onClick={handleSubmit} />
-          <button className="page-button" onClick={() => navigate("/intermediate")}>
-            Go to Final Page
-          </button>
+        <button
+    type="button"
+    className="btn btn-primary"
+    onClick={() => navigate("/intermediate")}
+  >
+    Submit
+  </button>
+
       </footer>
     </div>
   );
