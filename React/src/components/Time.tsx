@@ -1,15 +1,13 @@
 import React, { useState } from "react";
-import TimeDropdown from "./TimeDropdown";
+import Dropdown from "react-bootstrap/Dropdown";
 
 type Props = {
   selectedTime: string;
   setSelectedTime: (time: string) => void;
 };
 
-const Time: React.FC<Props> = ({selectedTime, setSelectedTime}) => {
-
+const Time: React.FC<Props> = ({ selectedTime, setSelectedTime }) => {
   const generateTimes = () => {
-    // Creates a list of times from
     const times: string[] = [];
     for (let h = 9; h < 22; h++) {
       const hour = h.toString().padStart(2, "0");
@@ -20,23 +18,40 @@ const Time: React.FC<Props> = ({selectedTime, setSelectedTime}) => {
     }
     return times;
   };
+
   const times = generateTimes();
 
-
+  const removeTime = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedTime("");
+  };
 
   return (
-    <div className="d-flex flex-column align-items-start my-3">
+    <Dropdown>
+      <Dropdown.Toggle variant="light" className="category-dropdown-toggle">
+        <div className="dropdown-content-display">
+          {!selectedTime ? (
+            <span className="placeholder-text">Select time...</span>
+          ) : (
+            <span className="category-tag">
+              {selectedTime}
+              <button className="remove-tag" onClick={removeTime}>
+                ×
+              </button>
+            </span>
+          )}
+        </div>
+      </Dropdown.Toggle>
 
-
-      <TimeDropdown
-        times={times}
-        selectedTime={selectedTime}
-        onSelect={setSelectedTime}
-      />
-
-      {selectedTime && <p>Selected start time: {selectedTime}</p>}
-
-    </div>
+      <Dropdown.Menu style={{ maxHeight: "300px", overflowY: "auto" }}>
+        {times.map((time) => (
+          <Dropdown.Item key={time} onClick={() => setSelectedTime(time)}>
+            {time}
+          </Dropdown.Item>
+        ))}
+      </Dropdown.Menu>
+    </Dropdown>
   );
 };
+
 export default Time;

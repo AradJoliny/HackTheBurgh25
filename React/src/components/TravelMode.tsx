@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Dropdown, DropdownButton } from "react-bootstrap";
+import React from "react";
+import { Dropdown } from "react-bootstrap";
 
 type Props = {
   selectedMode: string;
@@ -8,30 +8,38 @@ type Props = {
 
 const travelModes = ["WALK", "DRIVE", "TRANSIT"];
 
-const TravelMode: React.FC<Props> = ({selectedMode, setSelectedMode}) => {
-
-  const handleSelect = (mode: string | null) => {
-    if (mode) setSelectedMode(mode);
+const TravelMode: React.FC<Props> = ({ selectedMode, setSelectedMode }) => {
+  const removeMode = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedMode("");
   };
 
   return (
     <div className="d-flex flex-column">
-      <DropdownButton
-        id="travel-mode-dropdown"
-        title={selectedMode || "Select Travel Mode"}
-        onSelect={handleSelect}
-        menuVariant="light"
-      >
-        {travelModes.map((mode, idx) => (
-          <Dropdown.Item key={idx} eventKey={mode}>
-            {mode}
-          </Dropdown.Item>
-        ))}
-      </DropdownButton>
+      <Dropdown>
+        <Dropdown.Toggle variant="light" className="category-dropdown-toggle">
+          <div className="dropdown-content-display">
+            {!selectedMode ? (
+              <span className="placeholder-text">Select Travel Mode...</span>
+            ) : (
+              <span className="category-tag">
+                {selectedMode}
+                <button className="remove-tag" onClick={removeMode}>
+                  ×
+                </button>
+              </span>
+            )}
+          </div>
+        </Dropdown.Toggle>
 
-      {selectedMode && (
-        <p className="mt-2">Selected Travel Mode: <strong>{selectedMode}</strong></p>
-      )}
+        <Dropdown.Menu>
+          {travelModes.map((mode) => (
+            <Dropdown.Item key={mode} onClick={() => setSelectedMode(mode)}>
+              {mode}
+            </Dropdown.Item>
+          ))}
+        </Dropdown.Menu>
+      </Dropdown>
     </div>
   );
 };

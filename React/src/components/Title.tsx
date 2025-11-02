@@ -1,5 +1,5 @@
 function Title() {
-    return <h1>Plan Your Date!</h1>
+  return <h1>Activity Planner</h1>;
 }
 
 export default Title;
