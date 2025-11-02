@@ -44,6 +44,55 @@ def health():
     return jsonify({'status': 'healthy'}), 200
 
 
+@app.route('/save', methods=['POST', 'OPTIONS'])
+@cross_origin(
+    origins=list(ALLOWED_ORIGINS),
+    methods=['POST', 'OPTIONS'],
+    allow_headers=['Content-Type', 'Authorization'],
+    supports_credentials=True
+)
+def save():
+    # Let CORS preflight succeed
+    if request.method == 'OPTIONS':
+        return '', 204
+
+    if not request.is_json:
+        return jsonify({'error': 'expected JSON body'}), 400
+
+    data = request.get_json()
+
+    # Validate each field
+    coordinates = parse_coords(data)
+    if not coordinates:
+        return jsonify({'error': 'invalid or missing coordinates'}), 400
+
+    time = parse_time(data)
+    if not time:
+        return jsonify({'error': 'invalid or missing start_time'}), 400
+
+    categories = parse_categories(data)
+    if not categories:
+        return jsonify({'error': 'invalid or missing categories'}), 400
+
+    if 'radius' not in data:
+        return jsonify({'error': 'missing radius'}), 400
+
+    try:
+        radius = int(data['radius'])
+    except (ValueError, TypeError):
+        return jsonify({'error': 'invalid radius value'}), 400
+
+    travel_mode = data.get('travel_mode')
+    if travel_mode not in ['DRIVE', 'WALK', 'TRANSIT']:
+        return jsonify({'error': 'invalid travel_mode'}), 400
+
+    # Clear before saving new choices
+    clear_choices()
+    saved_data = save_choices(coordinates, time, categories, radius, travel_mode)
+
+    return jsonify({'status': 'ok', 'saved': saved_data}), 200
+
+
 @app.route('/getChoices', methods=['POST', 'OPTIONS'])
 @cross_origin(
     origins=list(ALLOWED_ORIGINS),

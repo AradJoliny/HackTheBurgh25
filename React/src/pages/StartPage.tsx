@@ -1,11 +1,5 @@
-import React, { useState } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useNavigate,
-} from "react-router-dom";
-// import StartPage from "../pages/StartPage";
+import React, {useState} from "react";
+import {BrowserRouter as Router, Routes, Route, useNavigate} from "react-router-dom";
 import IntermediatePage from "../pages/IntermediatePage";
 import FinalPage from "../pages/FinalPage";
 import "../App.css";
@@ -19,7 +13,7 @@ import Title from "../components/Title";
 import CategoryDropdown from "../components/CategoryDropdown/CategoryDropdown";
 
 const StartPage: React.FC = () => {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [coords, setCoords] = useState<[number, number]>([55.9533, -3.1883]);
@@ -53,7 +47,7 @@ const StartPage: React.FC = () => {
     const payload = {
       start_time: selectedTime,
       categories: selectedCategories,
-      coordinates: coords,
+      coordinates: { lat: coords[0], lng: coords[1] },  // Convert to object
       radius: radius * 1000,
       travel_mode: travelMode,
     };
@@ -63,14 +57,14 @@ const StartPage: React.FC = () => {
     const API_BASE = "http://127.0.0.1:5050";
 
     try {
-      const response = await fetch(`${API_BASE}/getChoices`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const response = await fetch(`${API_BASE}/save`, {  // Changed endpoint
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
 
       const data = await response.json();
-      console.log("Response from backend:", data);
+      console.log("Saved successfully:", data);
       navigate("/intermediate");
     } catch (error) {
       console.error("Error sending data:", error);
@@ -125,12 +119,9 @@ const StartPage: React.FC = () => {
 
       <footer className="submit-footer">
         <SubmitButton onClick={handleSubmit} />
-        <button
-          className="page-button"
-          onClick={() => navigate("/intermediate")}
-        >
-          Go to Final Page
-        </button>
+          <button className="page-button" onClick={() => navigate("/intermediate")}>
+            Go to Final Page
+          </button>
       </footer>
     </div>
   );
