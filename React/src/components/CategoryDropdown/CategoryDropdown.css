@@ -1,0 +1,25 @@
+.category-dropdown-toggle {
+    background-color: red;
+    border-color: darkblue;
+}
+
+.category-dropdown-toggle:hover,
+.category-dropdown-toggle:focus,
+.category-dropdown-toggle:active {
+
+}
+
+.dropdown-item-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.dropdown-item-enabled {
+    opacity: 1;
+    cursor: pointer;
+}
+
+.selected-items-display {
+    margin-top: 10px;
+    color: black;
+}

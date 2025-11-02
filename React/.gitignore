@@ -25,3 +25,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# IDE
+.idea/
+.env
+
+# Prettier config
+prettier.xml
