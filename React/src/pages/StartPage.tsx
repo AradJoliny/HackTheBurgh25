@@ -47,11 +47,11 @@ const App: React.FC = () => {
     }
 
     const payload = {
-      "start-time": selectedTime,
+      "start_time": selectedTime,
       categories: selectedCategories,
       coords: coords,
       radius: radius,
-      travelMode: travelMode,
+      "travel_mode": travelMode,
     };
 
     console.log("Sending to backend:", payload);
