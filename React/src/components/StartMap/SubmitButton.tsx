@@ -1,13 +1,15 @@
+import React from 'react';
 
 type SubmitButtonProps = {
-    onSubmit: () => void;
+    onClick: () => void;
 };
 
-export default function submitButton(){
+const SubmitButton: React.FC<SubmitButtonProps> = ({ onClick }) => {
 return(
 
     <div className="d-grid gap-2 col-6 mx-auto">
-        <button className="btn btn-light" type="button">Submit</button>
+        <button className="btn btn-light" type="button" onClick={onClick}>Submit</button>
     </div>
 );
 }
+export default SubmitButton;

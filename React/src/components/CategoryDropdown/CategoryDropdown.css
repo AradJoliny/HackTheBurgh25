@@ -6,8 +6,7 @@
 .category-dropdown-toggle:hover,
 .category-dropdown-toggle:focus,
 .category-dropdown-toggle:active {
-    background-color: blueviolet;
-    border-color: red;
+
 }
 
 .dropdown-item-disabled {

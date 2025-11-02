@@ -1,22 +1,68 @@
+/* Main App container */
 .App {
-    height: 100vh;
+    min-height: 100vh;
     width: 100%;
     display: flex;
+    flex-direction: column; /* stack header, dropdowns, map, footer */
     align-items: center;
-    justify-content: center;
-    position: relative;
+    justify-content: flex-start;
     background-color: #ffb7ce;
-    min-height: 100%;
     margin: 0;
-    padding: 0;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
+/* Content container for dropdowns */
 .content {
-    #border: 2px solid red;
     padding: 20px;
     background-color: white;
     border-radius: 10px;
     display: flex;
-    gap: 20%;
-    align-items: center;
+    gap: 20px; /* space between dropdowns */
+    align-items: flex-start;
+    flex-wrap: wrap; /* stack on small screens */
+    justify-content: flex-start;
+    flex-direction: column;
+}
+
+/* Make dropdown buttons same height */
+.content .btn, .content .dropdown-toggle {
+  height: 40px; /* or match Bootstrap's standard height */
+  display: flex;
+  align-items: center; /* vertically center text */
+}
+
+/* Map container */
+.map-container {
+    height: 400px; /* smaller map */
+    width: 100%;
+    max-width: 800px; /* optional max width */
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+/* Slider under map */
+.slider-container input.form-range {
+    width: 100%; /* match map width */
+}
+
+/* Buttons styling */
+button {
+    border-radius: 8px;
+}
+
+/* Body background */
+body {
+    background-color: #ffb7ce;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Dropdown menu scrollable */
+.dropdown-menu {
+    max-height: 300px;
+    overflow-y: auto;
 }
