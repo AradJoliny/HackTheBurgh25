@@ -20,7 +20,7 @@ dist/
 build/
 .env
 .DS_Store
-
+.idea
 .env
 __pycache__/
 *.pyc
