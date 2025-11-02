@@ -15,7 +15,7 @@ def test_find_activities_edinburgh():
             "lng": -3.187588
         },
         "start_time": "10:00",
-        "categories": ["Coffee", "Museum", "Restaurant", "Park", "Bar"],  # Multiple types!
+        "categories": ["Coffee", "Museum", "Restaurant", "Park", "Bar"],
         "radius": 5000,
         "travel_mode": "WALK"
     }
@@ -119,7 +119,7 @@ def test_create_schedule():
 
     travel_mode = result['choices'].get('travel_mode', 'WALK')
 
-    durations = ['short', 'medium', 'long', 'full_day']
+    durations = ['short', 'medium', 'long']
 
     for duration in durations:
         print(f"Testing '{duration}' duration")
@@ -140,16 +140,13 @@ def test_create_schedule():
             if schedule:
                 total_time_used = 0
                 for i, item in enumerate(schedule, 1):
-                    arrival_hours = item['arrival_time'] // 60
-                    arrival_mins = item['arrival_time'] % 60
                     start_hours = item['start_time'] // 60
                     start_mins = item['start_time'] % 60
 
-                    travel_time = item['start_time'] - item['arrival_time']
+                    travel_time = item['travel_time']
                     total_time_used += travel_time + item['duration']
 
                     print(f"\n  Activity {i}: {item['venue']['name']}")
-                    print(f"    Arrive: {arrival_hours:02d}:{arrival_mins:02d}")
                     print(f"    Start:  {start_hours:02d}:{start_mins:02d}")
                     print(f"    Duration: {item['duration']} mins")
                     print(f"    Travel time: {travel_time} mins")

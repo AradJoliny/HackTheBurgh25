@@ -96,8 +96,7 @@ def calculate_date_duration(duration):
     duration_mapping = {
         'short': 120,
         'medium': 300,
-        'long': 480,
-        'full_day': 720
+        'long': 480
     }
     # defaults to short if unknown
     return duration_mapping.get(duration, 180)
@@ -187,9 +186,9 @@ def create_schedule(duration, results, start_time, user_location,travel_mode):
         activity_duration = activity_durations.get(primary_type, 60)
         schedule.append({
             'venue': best_activity,
+            'travel_time': travel_time,
             'start_time': current_time,
             'duration': activity_duration,
-            'arrival_time': current_time - travel_time
         })
 
         current_time += activity_duration

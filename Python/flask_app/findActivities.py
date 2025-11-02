@@ -10,6 +10,24 @@ from google.maps import places_v1
 # Load environment variables from .env file
 load_dotenv()
 
+category_mapping = {
+    'Coffee': ['cafe', 'coffee_shop'],
+    'Dinner': ['restaurant'],
+    'Lunch': ['cafe', 'restaurant'],
+    'Movies': ['movie_theater'],
+    'Museum': ['museum', 'art_gallery'],
+    'Outdoor': ['park', 'hiking_area', 'botanical_garden', 'zoo', 'picnic_ground'],
+    'Live Events': ['concert_hall', 'theater', 'stadium', 'amphitheater'],
+    'Drinks': ['bar'],
+    'Shopping': ['shopping_mall', 'department_store', 'book_store'],
+    'Walk': ['Walk']
+}
+
+# Create the set of valid types from the mapping
+VALID_TYPES = set()
+for types_list in category_mapping.values():
+    VALID_TYPES.update(types_list)
+
 
 def find_activities():
     choices = load_choices()
@@ -65,7 +83,7 @@ def search_nearby_places(coords, included_types, radius_meters):
     request = places_v1.SearchNearbyRequest(
         location_restriction=location_restriction,
         included_types=included_types,
-        max_result_count=10,
+        max_result_count=15,
         rank_preference=places_v1.SearchNearbyRequest.RankPreference.POPULARITY
     )
 
@@ -82,7 +100,7 @@ def search_nearby_places(coords, included_types, radius_meters):
             activities.append({
                 "name": place.display_name.text if place.display_name else "Unknown",
                 "address": place.formatted_address if place.formatted_address else "",
-                "types": list(place.types) if place.types else [],
+                "types": [t for t in place.types if t in VALID_TYPES] if place.types else [],
                 "rating": place.rating if hasattr(place, 'rating') else None,
                 "location": {
                     "lat": place.location.latitude,
@@ -98,23 +116,10 @@ def search_nearby_places(coords, included_types, radius_meters):
 
 def translate_tags(categories):
     # mappings from user-selected activities to API tags for 'type'
-    category_mapping = {
-        'Coffee': ['cafe', 'coffee_shop'],
-        'Dinner': ['restaurant'],
-        'Lunch': ['cafe', 'restaurant'],
-        'Movies': ['movie_theater'],
-        'Museum': ['museum', 'art_gallery'],
-        'Outdoor': ['park', 'hiking_area', 'botanical_garden', 'zoo', 'picnic_ground'],
-        'Live Events': ['concert_hall', 'theater', 'stadium', 'amphitheater'],
-        'Drinks': ['bar'],
-        'Shopping': ['shopping_mall', 'department_store', 'book_store'],
-        # walk should not be included when querying the API
-        'Walk"': ['Walk']
-    }
-
-    translated_types = []
+    tags = []
     for category in categories:
-        if category in category_mapping:
-            translated_types.extend(category_mapping[category])
+        if category in category_mapping:  # Uses global category_mapping
+            tags.extend(category_mapping[category])
+    return tags
 
-    return list(set(translated_types))
+
