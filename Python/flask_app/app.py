@@ -2,8 +2,10 @@ from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
 
 from Python.flask_app.findActivities import find_activities
+from Python.flask_app.routeRequest import extract_travel_mode
 from Python.flask_app.services.Validation import *
-from Python.flask_app.storage.store_data import save_choices
+from Python.flask_app.schedular import create_schedule
+from Python.flask_app.storage.store_data import save_choices, clear_choices
 
 app = Flask(__name__)
 CORS(app)
@@ -51,10 +53,39 @@ def get_choices():
     if travel_mode not in ['DRIVE', 'WALK', 'TRANSIT']:
         return jsonify({'error': 'invalid travel_mode'}), 400
 
-    # Save to file
+    # clear before saving new choices
+    clear_choices()
     saved_data = save_choices(coordinates, time, categories, radius, travel_mode)
 
     return jsonify({'status': 'ok', 'saved': saved_data}), 200
+
+
+@app.route('/giveActivities', methods=['GET'])
+def give_activities():
+    activities = find_activities()
+
+    if activities.get("status") != "ok":
+        return jsonify(activities), 400
+
+    return jsonify(activities), 200
+
+# ----------------------------------------------------------
+
+duration = ["short","medium","long"]
+results = find_activities()
+activities = results['activities']
+start_time = results['choices']['start_time']
+user_location = results['choices']['coordinates']
+# travel_mode = extract_travel_mode()
+
+@app.route('/giveSchedule', methods=['GET'])
+def give_schedule():
+    schedule = create_schedule(duration=duration, results=activities, start_time=start_time,
+                                 user_location=user_location, travel_mode=travel_mode)
+
+    if schedule.get("status") != "ok":
+        return jsonify(schedule), 400
+    return jsonify(schedule), 200
 
 
 if __name__ == '__main__':

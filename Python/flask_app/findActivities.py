@@ -42,7 +42,7 @@ def find_activities():
 
     tags = translate_tags(categories)
 
-    print("Translated tags for search:", tags)
+    # print("Translated tags for search:", tags)
 
     # find places
     results = search_nearby_places(coords, tags, radius)
