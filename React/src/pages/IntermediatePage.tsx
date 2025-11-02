@@ -137,7 +137,10 @@ const IntermediatePage: React.FC = () => {
                   {schedule.activities.map((activity, actIdx) => (
                       <div key={actIdx} className="activity-item">
                         <p className="activity-name">
-                          <strong>{actIdx + 1}. {activity.venue.name}</strong>
+                          <strong>
+                            {actIdx + 1}. {activity.venue.name}
+                            {activity.venue.rating && ` ★ ${activity.venue.rating}`}
+                          </strong>
                         </p>
                         <p className="activity-details">
                           Start: {activity.start_time} |
@@ -145,9 +148,7 @@ const IntermediatePage: React.FC = () => {
                           Travel: {activity.travel_time} mins
                         </p>
                         <p className="activity-meta">
-                          {activity.venue.rating && `★ ${activity.venue.rating}`}
                           {activity.venue.rating && activity.venue.types?.length > 0 && " • "}
-                          {activity.venue.types?.slice(0, 3).join(", ")}
                         </p>
                       </div>
                   ))}
