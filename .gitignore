@@ -1,2 +1,6 @@
 ".idea/" 
 .idea/
+React/
+.env
+.env.local
+.end.production

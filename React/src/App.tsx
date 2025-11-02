@@ -11,92 +11,20 @@ import SubmitButton from "./components/StartMap/SubmitButton";
 import Slider from "./components/StartMap/Slider";
 import Time from "./components/Time";
 import TravelMode from "./components/TravelMode";
+import Title from "./components/Title";
+import CategoryDropdown from "./components/CategoryDropdown/CategoryDropdown";
 
 const App: React.FC = () => {
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedTime, setSelectedTime] = useState<string>("");
-  const [coords, setCoords] = useState<[number, number] | null>(null);
-  const [radius, setRadius] = useState<number>(1); // km
-  const [travelMode, setTravelMode] = useState<string>("");
-
-  const items = [
-    "Coffee",
-    "Dinner",
-    "Lunch",
-    "Walk",
-    "Movies",
-    "Museum",
-    "Outdoor",
-    "Live Events",
-    "Drinks",
-    "Shopping",
-  ];
-
-  console.log({selectedCategories, selectedTime, coords, radius, travelMode});
-  const handleSubmit = async () => {
-    if (!coords || !selectedTime || selectedCategories.length === 0 || !travelMode) {
-      alert("Please fill out all fields before submitting!");
-      return;
-    }
-
-    const payload = {
-  "start-time": selectedTime,
-  categories: selectedCategories,
-  coords: coords,
-  radius: radius,
-  travelMode: travelMode,
-};
-
-
-    console.log("Sending to backend:", payload);
-
-    try {
-      const response = await fetch("http://localhost:5000/api/start", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json();
-      console.log("Response from backend:", data);
-    } catch (error) {
-      console.error("Error sending data:", error);
-    }
-  };
-
   return (
-    <div className="app">
-      {/* HEADER */}
-      <header className="app-header">
-        <Title />
-      </header>
-
-      {/* DROPDOWNS SIDE BY SIDE */}
-      <div className="dropdowns-container">
-        <CategoryDropdown
-          items={items}
-          selectedCategories={selectedCategories}
-          setSelectedCategories={setSelectedCategories}
-        />
-        <Time selectedTime={selectedTime} setSelectedTime={setSelectedTime} />
-        <TravelMode selectedMode={travelMode} setSelectedMode={setTravelMode} />
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<StartPage />} />
+          <Route path="/intermediate" element={<IntermediatePage />} />
+          <Route path="/final" element={<FinalPage />} />
+        </Routes>
       </div>
-
-      {/* MAP + SLIDER */}
-      <main className="map-slider-container">
-        <div className="map-wrapper">
-          <Map radius={radius * 1000} coords={coords} setCoords={setCoords} />
-        </div>
-        <div className="slider-wrapper">
-          <Slider radius={radius} setRadius={setRadius} />
-        </div>
-      </main>
-
-      {/* SUBMIT BUTTON */}
-      <footer className="submit-footer">
-        <SubmitButton onClick={handleSubmit} />
-      </footer>
-    </div>
+    </Router>
   );
 };
 

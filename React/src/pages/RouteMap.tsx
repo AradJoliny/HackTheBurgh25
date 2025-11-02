@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 
-// declare prop shape
 interface RouteMapProps {
   encodedPolyline: string;
 }
@@ -13,41 +12,30 @@ const mapContainerStyle = {
 
 const libraries: "geometry"[] = ["geometry"];
 
-//
 const RouteMap: React.FC<RouteMapProps> = ({ encodedPolyline }) => {
-  // hold a ref to map
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY!,
+    libraries,
+  });
+
   const mapRef = useRef<google.maps.Map | null>(null);
-  // todo remove snapped path
   const [snappedPath, setSnappedPath] = useState<
     { lat: number; lng: number }[]
   >([]);
 
-  // load api key to google maps
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-    libraries: libraries,
-  });
-
-  // Decode encoded polyline once map is loaded
-  const decodedPath = isLoaded
-    ? google.maps.geometry.encoding.decodePath(encodedPolyline)
-    : [];
-
-  // Set default mode to driving for now
-  const travelMode = google.maps.TravelMode.DRIVING;
-
-  // Convert Latlng objects to simple {lat, lng} format
-  const originalPath = decodedPath.map((point) => ({
-    lat: point.lat(),
-    lng: point.lng(),
-  }));
-
-  // Snap to roads TODO change this to call route api
   useEffect(() => {
-    if (!isLoaded || originalPath.length === 0) return;
+    if (!isLoaded || !encodedPolyline) return;
+
+    const decodedPath =
+      google.maps.geometry.encoding.decodePath(encodedPolyline);
+    const originalPath = decodedPath.map((point) => ({
+      lat: point.lat(),
+      lng: point.lng(),
+    }));
+
+    if (originalPath.length === 0) return;
 
     const pathParam = originalPath.map((p) => `${p.lat},${p.lng}`).join("|");
-
     const snapUrl = `https://roads.googleapis.com/v1/snapToRoads?path=${pathParam}&interpolate=true&key=${
       import.meta.env.VITE_GOOGLE_MAPS_API_KEY
     }`;
@@ -56,7 +44,7 @@ const RouteMap: React.FC<RouteMapProps> = ({ encodedPolyline }) => {
       .then((res) => res.json())
       .then((data) => {
         if (!data.snappedPoints) {
-          console.error("No snapped points returned:", data);
+          console.warn("No snapped points returned:", data);
           return;
         }
 
@@ -65,7 +53,6 @@ const RouteMap: React.FC<RouteMapProps> = ({ encodedPolyline }) => {
           lng: p.location.longitude,
         }));
 
-        console.log("Snapped path:", snapped);
         setSnappedPath(snapped);
       })
       .catch((err) => console.error("Error snapping to roads:", err));
@@ -73,6 +60,13 @@ const RouteMap: React.FC<RouteMapProps> = ({ encodedPolyline }) => {
 
   if (loadError) return <div>Error loading maps: {loadError.message}</div>;
   if (!isLoaded) return <div>Loading maps...</div>;
+
+  // Once loaded, decode again for display (safe because google is defined)
+  const decodedPath = google.maps.geometry.encoding.decodePath(encodedPolyline);
+  const originalPath = decodedPath.map((point) => ({
+    lat: point.lat(),
+    lng: point.lng(),
+  }));
 
   const displayPath = snappedPath.length > 0 ? snappedPath : originalPath;
   const center = displayPath[0] || { lat: 52.36045, lng: -0.14927 };
@@ -87,17 +81,15 @@ const RouteMap: React.FC<RouteMapProps> = ({ encodedPolyline }) => {
         onLoad={(map) => {
           mapRef.current = map;
 
-          // Draw polyline
-          const polyline = new google.maps.Polyline({
+          new google.maps.Polyline({
             path: displayPath,
             strokeColor: "#FF0000",
             strokeOpacity: 1.0,
             strokeWeight: 4,
-            map: map,
+            map,
           });
         }}
       >
-        {/* Add markers at start and end */}
         {displayPath.length > 0 && (
           <>
             <Marker position={displayPath[0]} label="START" />
