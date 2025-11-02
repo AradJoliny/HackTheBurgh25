@@ -51,13 +51,13 @@ const App: React.FC = () => {
       categories: selectedCategories,
       coords: coords,
       radius: radius,
-      travelMode: travelMode,
+      "travel_mode": travelMode,
     };
 
     console.log("Sending to backend:", payload);
 
     try {
-      const response = await fetch("http://localhost:5000/api/start", {
+      const response = await fetch("http://localhost:5000/getChoices", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
