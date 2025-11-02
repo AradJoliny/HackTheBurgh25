@@ -20,17 +20,18 @@ def parse_categories(data):
         return categories
     return None
 
+
 def parse_coords(data):
-    if not isinstance(data, dict):
+    coords = data.get('coordinates')
+    if not coords:
         return None
 
-    if 'coords' in data and isinstance(data['coords'], (list, tuple)) and len(data['coords']) >= 2:
-        try:
-            lng = float(data['coords'][0])
-            lat = float(data['coords'][1])
-            return {'lng': lng, 'lat': lat}
-        except (ValueError, TypeError):
-            return None
+    if isinstance(coords, dict):
+        lat = coords.get('lat')
+        lng = coords.get('lng')
+        if lat is not None and lng is not None:
+            return {'lat': float(lat), 'lng': float(lng)}
+
     return None
 
 

@@ -59,9 +59,6 @@ def search_nearby_places(coords, types, radius_meters):
             location=(coords['lat'], coords['lng']),
             radius=radius_meters,
             type=types[0] if types else None,  # googlemaps only supports one type at a time
-            rankby='distance'
-
-
         )
 
         activities = []

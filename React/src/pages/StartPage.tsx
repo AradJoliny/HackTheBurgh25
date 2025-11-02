@@ -57,15 +57,22 @@ const StartPage: React.FC = () => {
     const API_BASE = "http://127.0.0.1:5050";
 
     try {
-      const response = await fetch(`${API_BASE}/save`, {  // Changed endpoint
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
+      const response = await fetch(`${API_BASE}/save`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+      if (!response.ok) {
+          const errorData = await response.json();
+          console.error("Backend error:", errorData);
+          alert(`Error: ${errorData.error || 'Unknown error'}`);
+          return;
+      }
 
       const data = await response.json();
-      console.log("Saved successfully:", data);
-      navigate("/intermediate");
+        console.log("Saved successfully:", data);
+        navigate("/intermediate");
     } catch (error) {
       console.error("Error sending data:", error);
     }

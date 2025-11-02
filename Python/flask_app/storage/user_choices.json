@@ -1,16 +1,14 @@
 {
   "coordinates": {
-    "lat": 55.950231,
-    "lng": -3.187588
+    "lat": 55.9666262928013,
+    "lng": -3.1756496429443364
   },
-  "start_time": "10:00",
+  "start_time": "09:30",
   "categories": [
-    "Coffee",
-    "Museum",
-    "Restaurant",
-    "Park",
-    "Bar"
+    "Outdoor",
+    "Drinks",
+    "Coffee"
   ],
-  "radius": 5000,
+  "radius": 2000,
   "travel_mode": "WALK"
 }
