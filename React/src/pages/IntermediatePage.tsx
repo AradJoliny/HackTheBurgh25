@@ -21,9 +21,11 @@ const IntermediatePage: React.FC = () => {
       try {
         setLoading(true);
 
+        const API_BASE = 'http://127.0.0.1:5050';
+
         // Call your Flask API
-        const response = await fetch("http://localhost:5000/giveSchedules", {
-          method: "POST",
+        const response = await fetch(`${API_BASE}/giveSchedule`, {
+          method: "GET",
           headers: {
             "Content-Type": "application/json",
           },
@@ -35,7 +37,20 @@ const IntermediatePage: React.FC = () => {
 
         const data = await response.json();
         console.log("Received schedules:", data);
-        setSchedules(data);
+
+        // Convert object to array
+        if (data.status === "ok" && data.schedules) {
+          const schedulesArray = [
+            data.schedules.short,
+            data.schedules.medium,
+            data.schedules.long
+          ].filter(Boolean); // Remove any undefined/null entries
+
+          setSchedules(schedulesArray);
+        } else {
+          throw new Error("Invalid response format");
+        }
+
         setError(null);
       } catch (err) {
         console.error("Error fetching schedules:", err);

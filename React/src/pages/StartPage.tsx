@@ -56,8 +56,10 @@ const App: React.FC = () => {
 
     console.log("Sending to backend:", payload);
 
+    const API_BASE = 'http://127.0.0.1:5050';
+
     try {
-      const response = await fetch("http://localhost:5000/getChoices", {
+      const response = await fetch(`${API_BASE}/getChoices`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

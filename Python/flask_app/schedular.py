@@ -1,4 +1,6 @@
-from routeRequest import calculate_route
+from datetime import datetime, timedelta
+
+from Python.flask_app.routeRequest import calculate_route
 
 # structure for looking up duration of each activity
 activity_durations = {
@@ -85,7 +87,7 @@ def select_next_activity(results, current_location, used_types, remaining_time, 
 def create_schedule(duration, results, start_time, user_location, travel_mode):
     total_minutes = calculate_date_duration(duration)
     schedule = []
-    current_time = start_time
+    current_time = datetime.strptime(start_time, "%H:%M")
     current_location = user_location
     used_types = set()
     remaining_time = total_minutes
@@ -114,7 +116,7 @@ def create_schedule(duration, results, start_time, user_location, travel_mode):
         except Exception:
             travel_time = 0
 
-        current_time += travel_time
+        current_time += timedelta(minutes=travel_time)  # Use timedelta
         remaining_time -= travel_time
 
         # add activity
@@ -123,14 +125,14 @@ def create_schedule(duration, results, start_time, user_location, travel_mode):
         schedule.append({
             'venue': best_activity,
             'travel_time': travel_time,
-            'start_time': current_time,
+            'start_time': current_time.strftime("%H:%M"),  # Convert to string for JSON
             'duration': activity_duration,
         })
 
-        current_time += activity_duration
+        current_time += timedelta(minutes=activity_duration)  # Use timedelta
         remaining_time -= activity_duration
         current_location = best_activity
-        #adding all types from this activity to used_types
+        # adding all types from this activity to used_types
         if best_activity.get('types'):
             used_types.update(best_activity['types'])
     return schedule

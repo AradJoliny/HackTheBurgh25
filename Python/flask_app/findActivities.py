@@ -1,7 +1,7 @@
 import os
 import googlemaps
 from dotenv import load_dotenv
-from storage.store_data import load_choices
+from Python.flask_app.storage.store_data import load_choices
 
 # Load environment variables
 load_dotenv()

@@ -1,14 +1,13 @@
 {
   "coordinates": {
-    "lng": -3.202128410339356,
-    "lat": 55.953998665954934
+    "lng": -3.195154666900635,
+    "lat": 55.956796152008764
   },
-  "start_time": "09:00",
+  "start_time": "11:00",
   "categories": [
-    "Coffee",
-    "Dinner",
+    "Walk",
     "Lunch"
   ],
-  "radius": 1,
-  "travel_mode": "Walk"
+  "radius": 2,
+  "travel_mode": "WALK"
 }

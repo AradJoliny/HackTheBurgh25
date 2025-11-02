@@ -1,5 +1,6 @@
 from Python.flask_app.findActivities import find_activities
-from Python.flask_app.routeRequest import calculate_route, extract_travel_mode, create_schedule, calculate_date_duration
+from Python.flask_app.routeRequest import calculate_route, extract_travel_mode
+from Python.flask_app.schedular import create_schedule, calculate_date_duration
 from google.maps import routing_v2
 
 from Python.flask_app.storage.store_data import save_choices
