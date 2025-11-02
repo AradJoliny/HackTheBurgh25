@@ -10,14 +10,14 @@ export default function Slider({ radius, setRadius }: SliderProps) {
   return (
     <div className="mb-3">
       <label htmlFor="radiusSlider" className="form-label">
-        Circle Radius: {radius} meters
+        Circle Radius: {(radius).toFixed(2)} km
       </label>
       <input
         type="range"
         className="form-range"
-        min={500}
-        max={5000}
-        step={5}
+        min={1}
+        max={10}
+        step={1}
         value={radius}
         id="radiusSlider"
         onChange={handleChange}

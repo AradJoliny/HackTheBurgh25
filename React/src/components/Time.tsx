@@ -1,7 +1,12 @@
 import React, { useState } from "react";
+import TimeDropdown from "./TimeDropdown";
 
-function Time() {
-  const [selectedTime, setSelectedTime] = useState("");
+type Props = {
+  selectedTime: string;
+  setSelectedTime: (time: string) => void;
+};
+
+const Time: React.FC<Props> = ({selectedTime, setSelectedTime}) => {
 
   const generateTimes = () => {
     // Creates a list of times from
@@ -17,28 +22,21 @@ function Time() {
   };
   const times = generateTimes();
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedTime(e.target.value);
-  };
 
-  const jsonString = selectedTime
-    ? JSON.stringify({ "start-time": selectedTime })
-    : "";
 
   return (
-    <div>
-      <label htmlFor="start-time">Select a start time: </label>
-      <select id="time" value={selectedTime} onChange={handleChange} size={10}>
-        <option value="">--Select a start time--</option>
-        {times.map((time, index) => (
-          <option key={index} value={time}>
-            {time}
-          </option>
-        ))}
-      </select>
+    <div className="d-flex flex-column align-items-start my-3">
+
+
+      <TimeDropdown
+        times={times}
+        selectedTime={selectedTime}
+        onSelect={setSelectedTime}
+      />
 
       {selectedTime && <p>Selected start time: {selectedTime}</p>}
+
     </div>
   );
-}
+};
 export default Time;
