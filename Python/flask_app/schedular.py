@@ -133,6 +133,6 @@ def create_schedule(duration, results, start_time, user_location, travel_mode):
         remaining_time -= activity_duration
         current_location = best_activity
         # adding all types from this activity to used_types
-        if best_activity.get('types'):
-            used_types.update(best_activity['types'])
+        if primary_type:
+            used_types.add(primary_type)
     return schedule

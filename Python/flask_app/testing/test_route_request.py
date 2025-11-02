@@ -106,7 +106,7 @@ def test_travel_modes():
 def test_create_schedule():
     """Test creating a schedule of activities"""
     user_location = {'lat': 55.950231, 'lng': -3.187588}
-    start_time = 600  # 10:00 AM in minutes
+    start_time = "10:00"
 
     # Get activities from find_activities
     result = find_activities()
@@ -141,14 +141,11 @@ def test_create_schedule():
             if schedule:
                 total_time_used = 0
                 for i, item in enumerate(schedule, 1):
-                    start_hours = item['start_time'] // 60
-                    start_mins = item['start_time'] % 60
-
                     travel_time = item['travel_time']
                     total_time_used += travel_time + item['duration']
 
                     print(f"\n  Activity {i}: {item['venue']['name']}")
-                    print(f"    Start:  {start_hours:02d}:{start_mins:02d}")
+                    print(f"    Start:  {item['start_time']}")
                     print(f"    Duration: {item['duration']} mins")
                     print(f"    Travel time: {travel_time} mins")
                     print(f"    Types: {', '.join(item['venue']['types'][:3])}")
