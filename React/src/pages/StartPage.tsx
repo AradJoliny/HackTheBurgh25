@@ -41,44 +41,54 @@ const StartPage: React.FC = () => {
   ];
 
   const handleSubmit = async () => {
-    if (
-      !coords ||
-      !selectedTime ||
-      selectedCategories.length === 0 ||
-      !travelMode
-    ) {
-      alert("Please fill out all fields before submitting!");
+  if (
+    !coords ||
+    !selectedTime ||
+    selectedCategories.length === 0 ||
+    !travelMode
+  ) {
+    alert("Please fill out all fields before submitting!");
+    return;
+  }
+
+  const payload = {
+    start_time: selectedTime,
+    categories: selectedCategories,
+    coordinates: {
+      lat: coords[0],
+      lng: coords[1]
+    },
+    radius: radius * 1000,
+    travel_mode: travelMode.toUpperCase(), // Ensure uppercase
+  };
+
+  console.log("Sending to backend:", payload);
+
+  const API_BASE = "http://127.0.0.1:5050";
+
+  try {
+    const response = await fetch(`${API_BASE}/getChoices`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Backend error:", errorData);
+      alert(`Error: ${errorData.message || 'Failed to submit'}`);
       return;
     }
 
-    const payload = {
-      start_time: selectedTime,
-      categories: selectedCategories,
-      coordinates: coords,
-      radius: radius * 1000,
-      travel_mode: travelMode,
-    };
+    const data = await response.json();
+    console.log("Response from backend:", data);
+    navigate("/intermediate");
 
-    console.log("Sending to backend:", payload);
-
-    const API_BASE = "http://127.0.0.1:5050";
-
-    try {
-      const response = await fetch(`${API_BASE}/getChoices`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json();
-      console.log("Response from backend:", data);
-
-    } catch (error) {
-      console.error("Error sending data:", error);
-    } finally{
-      navigate("/intermediate");
-    }
-  };
+  } catch (error) {
+    console.error("Error sending data:", error);
+    alert("Network error. Please try again.");
+  }
+};
 
   return (
     <div className="app">

@@ -76,7 +76,7 @@ def search_nearby_places(coords, types, radius_meters):
 
                 name = place.get("name", "")
 
-                if name.lower() in ['edinburgh', 'scotland', 'united kingdom']:
+                if name.lower() in ['edinburgh', 'scotland', 'united kingdom', 'Global News']:
                     continue
 
                 seen_place_ids.add(place_id)

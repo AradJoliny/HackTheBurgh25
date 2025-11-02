@@ -14,6 +14,20 @@ import Slider from "./Slider";
 import ClickableMap from "./ClickableMap";
 import L from "leaflet";
 
+// @ts-ignore
+import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
+// @ts-ignore
+import iconUrl from "leaflet/dist/images/marker-icon.png";
+// @ts-ignore
+import shadowUrl from "leaflet/dist/images/marker-shadow.png";
+
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl,
+  iconUrl,
+  shadowUrl,
+});
+
+
 import "leaflet/dist/leaflet.css";
 // import "../leaflet-config";
 

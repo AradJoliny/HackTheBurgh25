@@ -1,106 +1,44 @@
-import React, { useRef, useEffect, useState } from "react";
-import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
+import React from "react";
 
 interface RouteMapProps {
-  encodedPolyline: string;
+  activities: Array<{
+    venue: {
+      location: { lat: number; lng: number };
+      name: string;
+    };
+  }>;
 }
 
-const mapContainerStyle = {
-  width: "100%",
-  height: "400px",
-};
+const RouteMap: React.FC<RouteMapProps> = ({ activities }) => {
+  if (!activities || activities.length === 0) {
+    return <p>No route to display</p>;
+  }
 
-const libraries: "geometry"[] = ["geometry"];
+  // Get origin (first activity)
+  const origin = activities[0].venue.location;
 
-const RouteMap: React.FC<RouteMapProps> = ({ encodedPolyline }) => {
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY!,
-    libraries,
-  });
+  // Get destination (last activity)
+  const destination = activities[activities.length - 1].venue.location;
 
-  const mapRef = useRef<google.maps.Map | null>(null);
-  const [snappedPath, setSnappedPath] = useState<
-    { lat: number; lng: number }[]
-  >([]);
+  // Get waypoints (middle activities)
+  const waypoints = activities
+    .slice(1, -1)
+    .map(act => `${act.venue.location.lat},${act.venue.location.lng}`)
+    .join('|');
 
-  useEffect(() => {
-    if (!isLoaded || !encodedPolyline) return;
-
-    const decodedPath =
-      google.maps.geometry.encoding.decodePath(encodedPolyline);
-    const originalPath = decodedPath.map((point) => ({
-      lat: point.lat(),
-      lng: point.lng(),
-    }));
-
-    if (originalPath.length === 0) return;
-
-    const pathParam = originalPath.map((p) => `${p.lat},${p.lng}`).join("|");
-    const snapUrl = `https://roads.googleapis.com/v1/snapToRoads?path=${pathParam}&interpolate=true&key=${
-        process.env.REACT_APP_GOOGLE_MAPS_API_KEY
-      }`;
-
-    fetch(snapUrl)
-      .then((res) => res.json())
-      .then((data) => {
-        if (!data.snappedPoints) {
-          console.warn("No snapped points returned:", data);
-          return;
-        }
-
-        const snapped = data.snappedPoints.map((p: any) => ({
-          lat: p.location.latitude,
-          lng: p.location.longitude,
-        }));
-
-        setSnappedPath(snapped);
-      })
-      .catch((err) => console.error("Error snapping to roads:", err));
-  }, [isLoaded, encodedPolyline]);
-
-  if (loadError) return <div>Error loading maps: {loadError.message}</div>;
-  if (!isLoaded) return <div>Loading maps...</div>;
-
-  // Once loaded, decode again for display (safe because google is defined)
-  const decodedPath = google.maps.geometry.encoding.decodePath(encodedPolyline);
-  const originalPath = decodedPath.map((point) => ({
-    lat: point.lat(),
-    lng: point.lng(),
-  }));
-
-  const displayPath = snappedPath.length > 0 ? snappedPath : originalPath;
-  const center = displayPath[0] || { lat: 52.36045, lng: -0.14927 };
+  // Build Google Maps Directions URL
+  const mapsUrl = `https://www.google.com/maps/embed/v1/directions?key=AIzaSyCDzUuz6jj6X9VJUBYv3BLyuu3ChWSo1JI&origin=${origin.lat},${origin.lng}&destination=${destination.lat},${destination.lng}${waypoints ? `&waypoints=${waypoints}` : ''}&mode=walking`;
 
   return (
-    <div>
-      <p>Route with {displayPath.length} points</p>
-      <GoogleMap
-        mapContainerStyle={mapContainerStyle}
-        center={center}
-        zoom={15}
-        onLoad={(map) => {
-          mapRef.current = map;
-
-          new google.maps.Polyline({
-            path: displayPath,
-            strokeColor: "#FF0000",
-            strokeOpacity: 1.0,
-            strokeWeight: 4,
-            map,
-          });
-        }}
-      >
-        {displayPath.length > 0 && (
-          <>
-            <Marker position={displayPath[0]} label="START" />
-            <Marker
-              position={displayPath[displayPath.length - 1]}
-              label="END"
-            />
-          </>
-        )}
-      </GoogleMap>
-    </div>
+    <iframe
+      width="100%"
+      height="450"
+      style={{ border: 0, borderRadius: '8px' }}
+      loading="lazy"
+      allowFullScreen
+      referrerPolicy="no-referrer-when-downgrade"
+      src={mapsUrl}
+    />
   );
 };
 

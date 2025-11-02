@@ -39,10 +39,18 @@ def calculate_date_duration(duration):
 
 
 # choose the first activity in the list that meets the constraints
-def select_next_activity(results, current_location, used_types, remaining_time, current_time, travel_mode):
+def select_next_activity(results, current_location, used_types, remaining_time, current_time, travel_mode,
+                         used_venue_names):
     for activity in results:
-        # skip if activity type has already been done
+        venue_name = activity.get('name', '').lower()
+        if venue_name in used_venue_names:
+            continue
+
         activity_types = set(activity.get('types', []))
+        if not activity_types:
+            continue
+
+        # skip if activity type has already been done
         if activity_types & used_types:
             continue
 
@@ -90,12 +98,13 @@ def create_schedule(duration, results, start_time, user_location, travel_mode):
     current_time = datetime.strptime(start_time, "%H:%M")
     current_location = user_location
     used_types = set()
+    used_venue_names = set()
     remaining_time = total_minutes
 
     # shortest activity time is 60 minutes
     while remaining_time >= 60:
-        best_activity = select_next_activity(
-            results, current_location, used_types, remaining_time, current_time, travel_mode)
+        best_activity = select_next_activity(results, current_location, used_types, remaining_time, current_time,
+                                             travel_mode, used_venue_names)
         if not best_activity:
             break
 
@@ -133,6 +142,9 @@ def create_schedule(duration, results, start_time, user_location, travel_mode):
         remaining_time -= activity_duration
         current_location = best_activity
         # adding all types from this activity to used_types
+        venue_name = best_activity.get('name', '').lower()
+        if venue_name:
+            used_venue_names.add(venue_name)
         if primary_type:
             used_types.add(primary_type)
 

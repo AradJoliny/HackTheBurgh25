@@ -162,3 +162,126 @@ button.secondary:hover {
         max-width: 100%;
     }
 }
+/* -------------------------------
+   Intermediate Page Styling
+---------------------------------*/
+.intermediate-app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #F5F5F5;
+}
+
+.intermediate-app h1 {
+    text-align: left;
+    padding: 3rem;
+    background-color: #FFFFFF;
+    color: #212529;
+    font-weight: 700;
+    font-size: 2rem;
+    font-family: "Lucida Console", Monaco, monospace;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin: 0;
+}
+
+.intermediate-content {
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+    background-color: #FFFFFF;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.intermediate-content .page-button {
+    background-color: #6C757D;
+    color: #FFFFFF;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.intermediate-content .page-button:hover {
+    background-color: #495057;
+    cursor: pointer;
+}
+
+.activity-button {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.activity-button:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+
+.activity-button h1 {
+    padding: 0;
+    margin: 0 0 1rem 0;
+    font-size: 1.5rem;
+    background-color: transparent;
+    box-shadow: none;
+}
+
+.activity-button h2 {
+  padding: 0;
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+  color: #212529;
+  font-weight: 600;
+}
+
+.schedule-summary {
+    margin-bottom: 1.5rem;
+    color: #495057;
+}
+
+.schedule-summary p {
+    margin: 0.5rem 0;
+    font-size: 0.95rem;
+}
+
+.time-info {
+    color: #212529;
+    font-size: 1.1rem;
+}
+
+.activities-list {
+    border-top: 1px solid #DEE2E6;
+    padding-top: 1rem;
+}
+
+.activity-item {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #F8F9FA;
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-name {
+    color: #212529;
+    font-size: 1rem;
+    margin: 0.25rem 0;
+}
+
+.activity-details {
+    color: #6C757D;
+    font-size: 0.85rem;
+    margin: 0.25rem 0;
+}
+
+.activity-meta {
+    color: #6C757D;
+    font-size: 0.8rem;
+    margin: 0.25rem 0;
+}

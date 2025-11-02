@@ -21,152 +21,174 @@ interface Schedule {
   start_time: string;
   end_time: string;
   total_activities: number;
-  // Add other fields your API returns
 }
 
 const IntermediatePage: React.FC = () => {
-  const navigate = useNavigate();
-  const [schedules, setSchedules] = useState<Schedule[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate();
+    const [schedules, setSchedules] = useState<Schedule[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchSchedules = async () => {
-      try {
-        setLoading(true);
+    useEffect(() => {
+        const fetchSchedules = async () => {
+            try {
+                setLoading(true);
 
-        const API_BASE = 'http://127.0.0.1:5050';
+                const API_BASE = 'http://127.0.0.1:5050';
 
-        // Call your Flask API
-        const response = await fetch(`${API_BASE}/giveSchedule`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+                const response = await fetch(`${API_BASE}/giveSchedule`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log("Received schedules:", data);
+
+                // Convert object to array
+                if (data.status === "ok" && data.schedules) {
+                    const schedulesArray = [
+                        data.schedules.short,
+                        data.schedules.medium,
+                        data.schedules.long
+                    ].filter(Boolean); // Remove any undefined/null entries
+
+                    const cleanedSchedules = schedulesArray.map(removeDuplicateVenues);
+
+                    setSchedules(schedulesArray);
+                } else {
+                    throw new Error("Invalid response format");
+                }
+
+                setError(null);
+            } catch (err) {
+                console.error("Error fetching schedules:", err);
+                setError("Failed to load schedules. Please try again.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchSchedules();
+    }, []);
+
+    const labels = ["Short activities", "Medium activities", "Long activities"];
+
+    const calculate_total_duration = (schedule: Schedule): number => {
+        if (!schedule.activities || schedule.activities.length === 0) {
+            return 0;
         }
 
-        const data = await response.json();
-        console.log("Received schedules:", data);
-
-        // Convert object to array
-        if (data.status === "ok" && data.schedules) {
-          const schedulesArray = [
-            data.schedules.short,
-            data.schedules.medium,
-            data.schedules.long
-          ].filter(Boolean); // Remove any undefined/null entries
-
-          setSchedules(schedulesArray);
-        } else {
-          throw new Error("Invalid response format");
-        }
-
-        setError(null);
-      } catch (err) {
-        console.error("Error fetching schedules:", err);
-        setError("Failed to load schedules. Please try again.");
-      } finally {
-        setLoading(false);
-      }
+        return schedule.activities.reduce((total, activity) => {
+            return total + activity.duration + activity.travel_time;
+        }, 0);
     };
 
-    fetchSchedules();
-  }, []);
+    const removeDuplicateVenues = (schedule: Schedule): Schedule => {
+      const seenPlaceIds = new Set<string>();
+      const uniqueActivities: Activity[] = [];
 
-  const labels = ["Short activities", "Medium activities", "Long activities"];
+      schedule.activities?.forEach((activity) => {
+        const placeId = activity.venue.name; // Use name as fallback if no place_id
+        if (!seenPlaceIds.has(placeId)) {
+          seenPlaceIds.add(placeId);
+          uniqueActivities.push(activity);
+        }
+      });
 
-  if (loading) {
+      return {
+        ...schedule,
+        activities: uniqueActivities,
+        total_activities: uniqueActivities.length
+      };
+    };
+
+    if (loading) {
+        return (
+            <div className="intermediate-app">
+                <h1>Loading recommendations...</h1>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="intermediate-app">
+                <h1>Error</h1>
+                <p>{error}</p>
+                <button className="page-button" onClick={() => navigate("/")}>
+                    Back to Start
+                </button>
+            </div>
+        );
+    }
+
     return (
-      <div className="intermediate-app">
-        <h1>Loading recommendations...</h1>
-      </div>
-    );
-  }
+        <div className="intermediate-app">
+            <header className="app-header">
+                <h1>Recommendations</h1>
+            </header>
 
-  if (error) {
-    return (
-      <div className="intermediate-app">
-        <h1>Error</h1>
-        <p>{error}</p>
-        <button className="page-button" onClick={() => navigate("/")}>
-          Back to Start
-        </button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="intermediate-app">
-      <h1>Recommendations</h1>
-
-      <div className="intermediate-content">
-        <button className="page-button" onClick={() => navigate("/")}>
-          Back
-        </button>
-      </div>
-
-      {schedules.map((schedule, idx) => (
-          <div
-              key={idx}
-              className="activity-button"
-              onClick={() => {
-                // Store selected schedule in localStorage to access in FinalPage
-                navigate("/final", {state: {selectedSchedule: schedule}});
-              }}
-          >
-            <h1>{labels[idx]}</h1>
-            <div className="schedule-summary">
-              <p className="time-info">
-                <strong>{schedule.start_time} - {schedule.end_time}</strong>
-              </p>
-              <p>
-                <strong>Duration:</strong> {calculate_total_duration(schedule)} minutes (
-                {(calculate_total_duration(schedule) / 60).toFixed(1)} hours)
-              </p>
-              <p>
-                <strong>Activities:</strong> {schedule.activities?.length || 0}
-              </p>
+            <div className="intermediate-content">
+                <button className="page-button" onClick={() => navigate("/")}>
+                    Back
+                </button>
             </div>
 
-            {schedule.activities && schedule.activities.length > 0 ? (
-                <div className="activities-list">
-                  {schedule.activities.map((activity, actIdx) => (
-                      <div key={actIdx} className="activity-item">
-                        <p className="activity-name">
-                          <strong>
-                            {actIdx + 1}. {activity.venue.name}
-                            {activity.venue.rating && ` ★ ${activity.venue.rating}`}
-                          </strong>
+            {schedules.map((schedule, idx) => (
+                <div
+                    key={idx}
+                    className="activity-button"
+                    onClick={() => {
+                        navigate("/final", {state: {selectedSchedule: schedule}});
+                    }}
+                >
+                    <h2>{labels[idx]}</h2>
+                    <div className="schedule-summary">
+                        <p className="time-info">
+                            <strong>{schedule.start_time} - {schedule.end_time}</strong>
                         </p>
-                        <p className="activity-details">
-                          Start: {activity.start_time} |
-                          Duration: {activity.duration} mins |
-                          Travel: {activity.travel_time} mins
+                        <p>
+                            <strong>Duration:</strong> {calculate_total_duration(schedule)} minutes (
+                            {(calculate_total_duration(schedule) / 60).toFixed(1)} hours)
                         </p>
-                        <p className="activity-meta">
-                          {activity.venue.rating && activity.venue.types?.length > 0 && " • "}
+                        <p>
+                            <strong>Activities:</strong> {schedule.activities?.length || 0}
                         </p>
-                      </div>
-                  ))}
+                    </div>
+
+                    {schedule.activities && schedule.activities.length > 0 ? (
+                        <div className="activities-list">
+                            {schedule.activities.map((activity, actIdx) => (
+                                <div key={actIdx} className="activity-item">
+                                    <p className="activity-name">
+                                        <strong>
+                                            {actIdx + 1}. {activity.venue.name}
+                                            {activity.venue.rating && ` ★ ${activity.venue.rating}`}
+                                        </strong>
+                                    </p>
+                                    <p className="activity-details">
+                                        Start: {activity.start_time} |
+                                        Duration: {activity.duration} mins |
+                                        Travel: {activity.travel_time} mins
+                                    </p>
+                                    <p className="activity-meta">
+                                        {activity.venue.rating && activity.venue.types?.length > 0 && " • "}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p>No activities</p>
+                    )}
                 </div>
-            ) : (
-                <p>No activities</p>
-            )}
-          </div>
-      ))}
-    </div>
-  );
-  function calculate_total_duration(schedule: Schedule): number {
-  if (!schedule.activities || schedule.activities.length === 0) return 0;
-
-  return schedule.activities.reduce((total, activity) => {
-    return total + activity.duration + activity.travel_time;
-  }, 0);
+            ))}
+        </div>
+    );
 }
-};
-
 export default IntermediatePage;
