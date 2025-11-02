@@ -1,11 +1,6 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import StartPage from "../pages/StartPage";
-import IntermediatePage from "../pages/IntermediatePage";
-import FinalPage from "../pages/FinalPage";
+import React, { useState } from "react";
 import "../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useState } from "react";
 import Map from "../components/StartMap/Map";
 import SubmitButton from "../components/StartMap/SubmitButton";
 import Slider from "../components/StartMap/Slider";
@@ -13,13 +8,15 @@ import Time from "../components/Time";
 import TravelMode from "../components/TravelMode";
 import Title from "../components/Title";
 import CategoryDropdown from "../components/CategoryDropdown/CategoryDropdown";
+import { useNavigate } from "react-router-dom";
 
-const App: React.FC = () => {
+const StartPage: React.FC = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedTime, setSelectedTime] = useState<string>("");
-  const [coords, setCoords] = useState<[number, number] | null>(null);
-  const [radius, setRadius] = useState<number>(1); // km
+  const [coords, setCoords] = useState<[number, number]>([55.9533, -3.1883]);
+  const [radius, setRadius] = useState<number>(1);
   const [travelMode, setTravelMode] = useState<string>("");
+  const navigate = useNavigate();
 
   const items = [
     "Coffee",
@@ -34,7 +31,6 @@ const App: React.FC = () => {
     "Shopping",
   ];
 
-  console.log({ selectedCategories, selectedTime, coords, radius, travelMode });
   const handleSubmit = async () => {
     if (
       !coords ||
@@ -49,8 +45,8 @@ const App: React.FC = () => {
     const payload = {
       start_time: selectedTime,
       categories: selectedCategories,
-      coords: coords,
-      radius: radius,
+      coordinates: coords,
+      radius: radius * 1000,
       travel_mode: travelMode,
     };
 
@@ -65,6 +61,7 @@ const App: React.FC = () => {
 
       const data = await response.json();
       console.log("Response from backend:", data);
+      navigate("/intermediate");
     } catch (error) {
       console.error("Error sending data:", error);
     }
@@ -72,23 +69,41 @@ const App: React.FC = () => {
 
   return (
     <div className="app">
-      {/* HEADER */}
       <header className="app-header">
         <Title />
       </header>
 
-      {/* DROPDOWNS SIDE BY SIDE */}
       <div className="dropdowns-container">
-        <CategoryDropdown
-          items={items}
-          selectedCategories={selectedCategories}
-          setSelectedCategories={setSelectedCategories}
-        />
-        <Time selectedTime={selectedTime} setSelectedTime={setSelectedTime} />
-        <TravelMode selectedMode={travelMode} setSelectedMode={setTravelMode} />
+        {/* First row - Categories (full width) */}
+        <div className="dropdown-wrapper full-width">
+          <label className="dropdown-label">Choose Categories (max 3)</label>
+          <CategoryDropdown
+            items={items}
+            selectedCategories={selectedCategories}
+            setSelectedCategories={setSelectedCategories}
+          />
+        </div>
+
+        {/* Second row - Time and Transportation side by side */}
+        <div className="dropdown-row">
+          <div className="dropdown-wrapper">
+            <label className="dropdown-label">Select Start Time</label>
+            <Time
+              selectedTime={selectedTime}
+              setSelectedTime={setSelectedTime}
+            />
+          </div>
+
+          <div className="dropdown-wrapper">
+            <label className="dropdown-label">Choose Transportation</label>
+            <TravelMode
+              selectedMode={travelMode}
+              setSelectedMode={setTravelMode}
+            />
+          </div>
+        </div>
       </div>
 
-      {/* MAP + SLIDER */}
       <main className="map-slider-container">
         <div className="map-wrapper">
           <Map radius={radius * 1000} coords={coords} setCoords={setCoords} />
@@ -98,7 +113,6 @@ const App: React.FC = () => {
         </div>
       </main>
 
-      {/* SUBMIT BUTTON */}
       <footer className="submit-footer">
         <SubmitButton onClick={handleSubmit} />
       </footer>
@@ -106,4 +120,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default StartPage;
