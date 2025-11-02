@@ -21,6 +21,7 @@ def health():
     return jsonify({'status': 'healthy'}), 200
 
 
+# saving user choices
 @app.route('/getChoices', methods=['POST'])
 def get_choices():
     if not request.is_json:
@@ -60,32 +61,27 @@ def get_choices():
     return jsonify({'status': 'ok', 'saved': saved_data}), 200
 
 
-@app.route('/giveActivities', methods=['GET'])
-def give_activities():
-    activities = find_activities()
-
-    if activities.get("status") != "ok":
-        return jsonify(activities), 400
-
-    return jsonify(activities), 200
-
-# ----------------------------------------------------------
-
-duration = ["short","medium","long"]
-results = find_activities()
-activities = results['activities']
-start_time = results['choices']['start_time']
-user_location = results['choices']['coordinates']
-# travel_mode = extract_travel_mode()
-
-@app.route('/giveSchedule', methods=['GET'])
+# generating schedules based on saved choices
+@app.route('/giveSchedules', methods=['POST'])
 def give_schedule():
-    schedule = create_schedule(duration=duration, results=activities, start_time=start_time,
-                                 user_location=user_location, travel_mode=travel_mode)
+    durations = ["short", "medium", "long"]
+    results = find_activities()
+    activities = results['activities']
+    start_time = results['choices']['start_time']
+    user_location = results['choices']['coordinates']
+    travel_mode = extract_travel_mode(results['choices'])
 
-    if schedule.get("status") != "ok":
-        return jsonify(schedule), 400
-    return jsonify(schedule), 200
+    schedules = []
+    for duration in durations:
+        schedule = create_schedule(duration=duration, results=activities, start_time=start_time,
+                                   user_location=user_location, travel_mode=travel_mode)
+
+        if schedule.get("status") != "ok":
+            return jsonify(schedule), 400
+
+        schedules.append(schedule)
+
+    return jsonify(schedules), 200
 
 
 if __name__ == '__main__':
