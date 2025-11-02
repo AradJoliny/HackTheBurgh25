@@ -5,10 +5,10 @@
   },
   "start_time": "10:30",
   "categories": [
-    "Movies",
-    "Museum",
-    "Drinks"
+    "Coffee",
+    "Dinner",
+    "Lunch"
   ],
-  "radius": 3000,
+  "radius": 1000,
   "travel_mode": "WALK"
 }
